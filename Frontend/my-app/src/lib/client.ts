@@ -1,5 +1,6 @@
 import {ItemDto} from "@/type/items";
 
+
 export function fetchApi(url: string, options?: RequestInit) {
     if (options?.body) {
         const headers = new Headers(options.headers || {});
@@ -19,23 +20,11 @@ export function fetchApi(url: string, options?: RequestInit) {
 }
 
 //일단 테스트 데이터 넣기
-export function getItems(): ItemDto[]  {
-
-    return [{
-            itemId: 1,
-            itemName: "name1",
-            price: 100,
-            createdDate: "2025-09-24",
-            status: "sale",
-            imageUrl: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fblog.given-log.com%2Fpost%2Fdev%2F20241015-react-useState&psig=AOvVaw1_0Spntces3qGBsDH_U5Ml&ust=1758762393208000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCPi56tGa8I8DFQAAAAAdAAAAABAE"
-        },{
-            itemId: 2,
-            itemName: "name2",
-            price: 200,
-            createdDate: "2025-09-25",
-            status: "sale",
-            imageUrl: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fblog.given-log.com%2Fpost%2Fdev%2F20241015-react-useState&psig=AOvVaw1_0Spntces3qGBsDH_U5Ml&ust=1758762393208000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCPi56tGa8I8DFQAAAAAdAAAAABAE"
-        }];
-
-
+export function getItems(): ItemDto[] {
+    return [
+        { itemId: 1, itemName: "name1", price: 100, imageUrl: "https://tech.wonderwall.kr/_astro/nextjs.D927XOPf.png" },
+        { itemId: 2, itemName: "name2", price: 200, imageUrl: "https://tech.wonderwall.kr/_astro/nextjs.D927XOPf.png" },
+        { itemId: 3, itemName: "name3", price: 300, imageUrl: "https://tech.wonderwall.kr/_astro/nextjs.D927XOPf.png" }
+    ];
 }
+
