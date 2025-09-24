@@ -1,5 +1,6 @@
-package com.example.domain.order.Entity;
+package com.example.cafe.domain.order.Entity;
 
+import com.example.cafe.domain.item.entity.Item;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
