@@ -12,11 +12,11 @@ export default function ItemsLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className={"bg-[#ddd]"}>
-            <div>
+        <div className={"bg-[#ddd] contain-fluid"}>
+            <div className={"row justify-content-center m-4"}>
                <h1>Grids & Circle</h1>
             </div>
-            <div>
+            <div className={"row justify-content-center m-4 bg-white"}>
                 {children}
             </div>
 

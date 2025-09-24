@@ -19,7 +19,7 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
 
-    // 1. 상품 목록 조회
+    // 1. 전체 상품 목록 조회
     public List<ItemResponse> getAllItems() {
         return itemRepository.findAll()
                 .stream()
@@ -52,7 +52,6 @@ public class ItemService {
     public ItemResponse updateItem(Long itemId, ItemUpdateRequest request) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다. ID: " + itemId));
-
         if (request.getItemName() != null) {
             item.setItemName(request.getItemName());
         }
@@ -73,6 +72,7 @@ public class ItemService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다. ID: " + itemId));
 
+        // 재고없음
         item.setStatus("noQty");
         itemRepository.save(item);
     }
