@@ -90,8 +90,7 @@ export default function Home() {
             alert("우편번호를 입력해주세요.");
             postcodeInput.focus();
         }
-
-
+        //이하 api 패치 구현
 
     };
 
