@@ -1,12 +1,11 @@
-package com.example.domain.order.Service;
+package com.example.cafe.domain.order.Service;
 
-import com.example.domain.order.Dto.OrderCreateRequest;
-import com.example.domain.order.Dto.OrderCreateResponse;
-import com.example.domain.order.Entity.OrderItem;
-import com.example.domain.order.Entity.Orders;
-import com.example.domain.order.Repository.OrderRepository;
+import com.example.cafe.domain.order.Dto.OrderCreateRequest;
+import com.example.cafe.domain.order.Dto.OrderCreateResponse;
+import com.example.cafe.domain.order.Entity.OrderItem;
+import com.example.cafe.domain.order.Entity.Orders;
+import com.example.cafe.domain.order.Repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

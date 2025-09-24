@@ -1,10 +1,9 @@
-package com.example.domain.order.Controller;
+package com.example.cafe.domain.order.Controller;
 
-import com.example.domain.order.Dto.OrderCreateRequest;
-import com.example.domain.order.Dto.OrderCreateResponse;
-import com.example.domain.order.Service.OrderService;
+import com.example.cafe.domain.order.Dto.OrderCreateRequest;
+import com.example.cafe.domain.order.Dto.OrderCreateResponse;
+import com.example.cafe.domain.order.Service.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
