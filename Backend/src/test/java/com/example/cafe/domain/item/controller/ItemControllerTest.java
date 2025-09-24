@@ -65,7 +65,7 @@ public class ItemControllerTest {
                 .itemName(name)
                 .price(price)
                 .imageUrl(url)
-                .build(); // createdDate=now, status=onSale
+                .build();
         return ItemResponse.from(item);
     }
 
@@ -92,7 +92,6 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.itemName").value("테스트 아이템"))
                 .andExpect(jsonPath("$.price").value(5000))
                 .andExpect(jsonPath("$.imageUrl").value("http://image.png"))
-                .andExpect(jsonPath("$.status").value("onSale"))
                 .andExpect(jsonPath("$.createdDate").exists());
     }
 
@@ -106,7 +105,6 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.itemName").value("아메리카노"))
                 .andExpect(jsonPath("$.price").value(3000))
                 .andExpect(jsonPath("$.imageUrl").value("http://a.png"))
-                .andExpect(jsonPath("$.status").value("onSale"))
                 .andExpect(jsonPath("$.createdDate").exists());
 
         verify(itemService).getItem(1L);
@@ -135,7 +133,6 @@ public class ItemControllerTest {
         req.put("itemName", "업데이트 아이템");
         req.put("price", 5500);
         req.put("imageUrl", "http://new.png");
-        req.put("status", "onSale");
 
         String reqJson = objectMapper.writeValueAsString(req);
 
@@ -149,7 +146,6 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.itemName").value("업데이트 아이템"))
                 .andExpect(jsonPath("$.price").value(5500))
                 .andExpect(jsonPath("$.imageUrl").value("http://new.png"))
-                .andExpect(jsonPath("$.status").value("onSale"))
                 .andExpect(jsonPath("$.createdDate").exists())
                 .andDo(print());
 
