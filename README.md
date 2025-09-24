@@ -1,6 +1,17 @@
-# NBE7-9-10-Team10
-
+# Grids & Circles
 ## 팀원
+
+## 프로젝트 소개
+
+## 시나리오
+
+## 기술 스택
+
+## 프로젝트 구조
+
+## ERD 설계
+<img width="1079" height="565" alt="ERD" src="https://github.com/user-attachments/assets/9330ce99-8516-4adf-9fd5-e380b8b86138" />
+
 
 ## 브랜치 규칙
 - 이슈 페이지 생성후 관련 브랜치 생성 후 작업
@@ -27,9 +38,3 @@
 | `test` | 테스트 코드, 리팩토링 테스트 코드 추가 | `test: 테스트 코드 추가 및 수정` |
 | `docs` | 문서 수정 | `docs: 문서 수정` |
 
-
-## ERD 설계
-<img width="1079" height="565" alt="ERD" src="https://github.com/user-attachments/assets/9330ce99-8516-4adf-9fd5-e380b8b86138" />
-
-
-##
