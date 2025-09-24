@@ -30,7 +30,7 @@ export function getItems(): ItemDto[] {
 
 //상품 추가
 export function createItem(itemData: ItemCreateRequest): Promise<ItemDto> {
-    return fetchApi('/items', {
+    return fetchApi('/api/v1/items', {
         method: 'POST',
         body: JSON.stringify(itemData),
     });
