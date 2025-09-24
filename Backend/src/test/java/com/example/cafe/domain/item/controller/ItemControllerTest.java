@@ -84,6 +84,7 @@ public class ItemControllerTest {
         given(itemService.createItem(any()))
                 .willReturn(response("테스트 아이템", 5000, "http://image.png"));
 
+        mvc.perform(post("/api/v1/items")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(reqJson))
                 .andExpect(status().isCreated())
@@ -100,6 +101,7 @@ public class ItemControllerTest {
     void t2() throws Exception {
         given(itemService.getItem(1L)).willReturn(response("아메리카노", 3000, "http://a.png"));
 
+        mvc.perform(get("/api/v1/items/{itemId}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.itemName").value("아메리카노"))
                 .andExpect(jsonPath("$.price").value(3000))
@@ -117,6 +119,7 @@ public class ItemControllerTest {
         ItemResponse r2 = response("라떼", 4000, "http://b.png");
         given(itemService.getAllItems()).willReturn(List.of(r1, r2));
 
+        mvc.perform(get("/api/v1/items"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].itemName").value("아메리카노"))
@@ -139,6 +142,7 @@ public class ItemControllerTest {
         given(itemService.updateItem(eq(1L), any(ItemUpdateRequest.class)))
                 .willReturn(response("업데이트 아이템", 5500, "http://new.png"));
 
+        mvc.perform(put("/api/v1/items/{itemId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(reqJson))
                 .andExpect(status().isOk())
@@ -158,6 +162,7 @@ public class ItemControllerTest {
         //delete시 아무일도 없도록 stub 걸기, 예외발생 없이 그냥 통과
         doNothing().when(itemService).deleteItem(1L);
 
+        mvc.perform(delete("/api/v1/items/{itemId}", 1L))
                 .andExpect(status().isNoContent())
                 .andDo(print());
 
