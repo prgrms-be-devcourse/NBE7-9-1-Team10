@@ -2,7 +2,7 @@
 
 import {useEffect, useState} from "react";
 import {ItemDto} from "@/type/items";
-import {fetchApi, getItems} from "@/lib/items";
+import {fetchApi, getItems} from "@/lib/client";
 
 type CartItem = {
     item: ItemDto;
