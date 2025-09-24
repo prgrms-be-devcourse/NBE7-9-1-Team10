@@ -17,8 +17,9 @@
 - **데이터베이스 연동**
     - SQL 또는 ORM(JPA) 기반 설계
     - 상품, 주문, 주문상품, 재고, 고객 테이블 설계
+## 시나리오
 <details>
-<summary>## 시나리오</summary>
+<summary>요약</summary>
 
 - **상품 목록 확인**
     - 나는 쇼핑을 원하는 사용자로서, 상품 목록을 확인할 수 있다.
@@ -82,6 +83,12 @@
         → 그래야 주문을 준비하고 고객에게 배송할 수 있다.
       </details>
 ## 기술 스택
+<img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white"/>
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white"/>
+  <br/>
+  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Tailwind CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>
 
 ## 프로젝트 구조
 
