@@ -13,7 +13,7 @@ export default function NewItemPage() {
     const itemName = form.itemName;
     const price = form.price;
     const imageUrl = form.imageUrl;
-    const itemData = { name: itemName.value, price: Number(price.value), imageUrl: imageUrl.value };
+    const itemData = { itemName: itemName.value, price: Number(price.value), imageUrl: imageUrl.value };
     
     if (itemName.value.length === 0) {
         alert("이름을 입력해주세요.");
