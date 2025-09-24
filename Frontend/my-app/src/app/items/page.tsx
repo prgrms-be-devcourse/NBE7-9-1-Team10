@@ -3,6 +3,7 @@
 import {useEffect, useState} from "react";
 import {ItemDto} from "@/type/items";
 import {fetchApi, getItems} from "@/lib/client";
+import {router} from "next/client";
 
 
 type CartItem = {
@@ -74,7 +75,6 @@ export default function Home() {
 
         const emailInput = form.email;
         const addressInput = form.address;
-        const postcodeInput = form.postcode;
 
         if (emailInput.value.length === 0) {
             alert("이메일을 입력해주세요.");
@@ -86,80 +86,100 @@ export default function Home() {
             addressInput.focus();
         }
 
-        if (postcodeInput.value.length === 0) {
-            alert("우편번호를 입력해주세요.");
-            postcodeInput.focus();
+        if (cart.length === 0) {
+            alert("구매하실 제품을 추가해주세요.");
+
         }
-        //이하 api 패치 구현
+
+
+        const orderItems = cart.map(item => ({
+            id: item.item.itemId,
+            qty: item.count
+        }));
+
+        const requestBody =JSON.stringify({
+                email: emailInput.value,
+                totalPrice: totalPrice,
+                address: addressInput.value,
+                items : orderItems
+            });
+
+        fetchApi(`/orders`, {
+            method: "POST",
+            body: requestBody,
+        }).then((data) => {
+            alert(data.msg);
+        });
+        //console.log("전송할 요청 본문:", requestBody);
 
     };
 
 
     return (
-        <div className="card">
-            <div className="row">
-                <div className="col-md-8 mt-4 d-flex flex-column align-items-start p-3 pt-0">
-                    <h5 className="flex-grow-0"><b>상품 목록</b></h5>
-                    <ul className="list-group products">
-                        {items.map((item)=>{
-                                return (<li className="list-group-item d-flex mt-3" key={item.itemId}>
-                                    <div className="col-2">
-                                        <img className="img-fluid" src={item.imageUrl} alt="" width={100}/>
-                                    </div>
-                                    <div className="col">
-                                        <div className="row text-muted">{item.itemName}</div>
-                                    </div>
-                                    <div className="col text-center price">{item.price}</div>
-                                    <div className="col text-end action">
-                                        <button className="btn btn-small btn-outline-dark" onClick={()=>{
-                                            addToCart(item);
-                                        }}>추가</button>
-                                    </div>
-                                </li>);
-                            })
-                        }
+        <div className="flex flex-col md:flex-row justify-center items-start rounded-2xl bg-white md:space-x-8">
+            {/* 상품 목록 */}
+            <div className="p-4">
+                <h5 className="font-bold">상품 목록</h5>
+                <hr />
+                <ul className="flex flex-col">
+                    {items.map((item) => (
+                        <li className="border flex flex-row m-2 p-2 justify-between items-center gap-8" key={item.itemId}>
+
+                            <img className="" src={item.imageUrl} alt="" width={50} />
+
+                            <div className="font-semibold">{item.itemName}</div>
+
+                            <div className="text-gray-600">{item.price}원</div>
+
+                            <button className="border rounded-sm" onClick={() => addToCart(item)}>추가</button>
 
 
-                    </ul>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            {/* Summary and Form */}
+            <div className="p-4 bg-gray-200 rounded-r-2xl">
+                <div>
+                    <h5 className="font-bold m-0 p-0">Summary</h5>
                 </div>
-                <div className="col-md-4 summary p-4">
-                    <div>
-                        <h5 className="m-0 p-0"><b>Summary</b></h5>
+                <hr />
+                {cart.map((c, index) => (
+                    <div className="flex justify-between items-center my-2" key={index}>
+                        <div className={"flex flex-row gap-3"}>
+                            <h6 className="font-semibold">
+                                {c.item.itemName}
+                            </h6>
+                            <span className="badge bg-black text-white rounded-sm text-sm p-1">{c.count}개</span>
+                        </div>
+
+                        <div>
+                            <button className="p-1 px-2 border rounded-full mr-1 bg-black text-white" onClick={() => addToCart(c.item)}>+</button>
+                            <button className="p-1 px-2 border rounded-full mr-1 bg-black text-white" onClick={() => subFromCart(c.item)}>-</button>
+                            <button className="p-1 px-2 rounded-full bg-white" onClick={() => deleteFromCart(c.item)}>삭제</button>
+                        </div>
                     </div>
-                    <hr/>
-                    {cart.map((c, index)=>{
-                        return (<div className="row" key={index}>
-                            <h6 className="p-0">{c.item.itemName} <span className="badge bg-dark text-">{c.count}</span></h6>
-                            <button onClick={()=>{addToCart(c.item);}}>+</button>
-                            <button onClick={()=>{subFromCart(c.item);}}>-</button>
-                            <button onClick={()=>{deleteFromCart(c.item);}}>삭제</button>
-                        </div>)
-                    })}
+                ))}
 
-
-                    <form onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                            <label htmlFor="email" className="form-label" >이메일</label>
-                            <input type="email" className="form-control mb-1" id="email" name="email"/>
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="address" className="form-label">주소</label>
-                            <input type="text" className="form-control mb-1" id="address" name="address"/>
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="postcode" className="form-label">우편번호</label>
-                            <input type="text" className="form-control" id="postcode" name="postcode"/>
-                        </div>
-                        <div>당일 오후 2시 이후의 주문은 다음날 배송을 시작합니다.</div>
-
-                    <div className="row pt-2 pb-2 border-top">
-                        <h5 className="col">총금액</h5>
-                        <h5 className="col text-end">{totalPrice}원</h5>
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-3">
+                        <label htmlFor="email" className="form-label">이메일</label>
+                        <input type="email" className="form-control mb-1 border rounded-md p-2 w-full bg-white" id="email" name="email" />
                     </div>
-                    <button className="btn btn-dark col-12"  type="submit">결제하기</button>
-                    </form>
-                </div>
+                    <div className="mb-3">
+                        <label htmlFor="address" className="form-label">주소</label>
+                        <input type="text" className="form-control mb-1 border rounded-md p-2 w-full bg-white" id="address" name="address" />
+                    </div>
+                    <div>당일 오후 2시 이후의 주문은 다음날 배송을 시작합니다.</div>
+                    <div className="flex justify-between items-center py-2 border-t mt-2">
+                        <h5 className="font-bold">총금액</h5>
+                        <h5 className="font-bold text-right">{totalPrice}원</h5>
+                    </div>
+                    <button className="btn btn-dark w-full bg-black text-white p-2 rounded-md mt-2" type="submit">결제하기</button>
+                </form>
             </div>
         </div>
+
     );
 }
