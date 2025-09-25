@@ -1,5 +1,6 @@
 package com.example.cafe.domain.order.Controller;
 
+import com.example.cafe.domain.order.Dto.FindAllOrderByEmailResponse;
 import com.example.cafe.domain.order.Dto.FindAllOrderResponse;
 import com.example.cafe.domain.order.Dto.OrderCreateRequest;
 import com.example.cafe.domain.order.Dto.OrderCreateResponse;
@@ -9,10 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "주문 관리", description = "주문 관련 API")
 @RestController
@@ -32,5 +30,14 @@ public class OrderController {
     public ResponseEntity<FindAllOrderResponse> fIndAllOrderResponse(){
         FindAllOrderResponse findAllOrderResponse = orderService.findAllOrders();
         return ResponseEntity.ok(findAllOrderResponse);
+    }
+
+    @GetMapping("/api/v1/orders/user")
+    public ResponseEntity<FindAllOrderByEmailResponse> FindAllOrderByEmailResponse(@RequestParam String email){
+        if(email != null){
+            FindAllOrderByEmailResponse findAllOrderByEmailResponse = orderService.findAllOrderByEmailResponse(email);
+            return ResponseEntity.ok(findAllOrderByEmailResponse);
+        }
+        return ResponseEntity.badRequest().build();
     }
 }
