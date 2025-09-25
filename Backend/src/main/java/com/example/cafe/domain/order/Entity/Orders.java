@@ -19,7 +19,6 @@ public class Orders {
     private String customerEmail;
     private LocalDateTime orderDate;
 
-    private int totalPrice;
     private String address;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
@@ -27,20 +26,29 @@ public class Orders {
 
     protected Orders() {}
 
-    public Orders(String customerEmail, int totalPrice, String address){
+    public Orders(String customerEmail, String address){
         this.customerEmail = customerEmail;
         this.orderDate = LocalDateTime.now();
-        this.totalPrice = totalPrice;
         this.address = address;
     }
 
-    public static Orders createOrder(String customerEmail, int totalPrice, String address, List<OrderItem> orderItems){
-        Orders orders = new Orders(customerEmail, totalPrice, address);
+    public static Orders createOrder(String customerEmail, String address, List<OrderItem> orderItems){
+        Orders orders = new Orders(customerEmail, address);
         for(OrderItem orderItem : orderItems){
             orders.getOrderItems().add(orderItem);
         }
 
         return orders;
+    }
+
+    public int totalPrice(){
+        return this
+                .getOrderItems()
+                .stream()
+                .mapToInt(m ->
+                        m.getItem().getPrice() * m.getQty()
+                )
+                .sum();
     }
 
 }
