@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -106,8 +106,7 @@ public class OrdersControllerTest {
     void t2() throws Exception {
         int beforeSize = orderRepository.findAll().size();
         long id1 = createOrderAndGetId("test@example.com", "서울 송파");
-        long id2 = createOrderAndGetId("test@example.com", "서울 송파");
-        long id3 = createOrderAndGetId("testest@example.com", "부산 해운대");
+        long id2 = createOrderAndGetId("testest@example.com", "부산 해운대");
 
         // when
         ResultActions result = mvc.perform(
@@ -118,10 +117,11 @@ public class OrdersControllerTest {
         // then
         result
                 .andExpect(handler().handlerType(OrderController.class))
-                .andExpect(handler().methodName("getOrders")) // 임시 업로드되면 실제 메서드명으로 변경
+                .andExpect(handler().methodName("fIndAllOrderResponse"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$.length()").value(beforeSize + 3));
+                .andExpect(jsonPath("$.orders").isArray())
+                .andExpect(jsonPath("$.orders[*].orderId").value(hasItems((int) id1, (int) id2)))
+                .andExpect(jsonPath("$.orders[*].email").value(hasItems("test@example.com", "testest@example.com")));
     }
 
     @Test
@@ -138,7 +138,7 @@ public class OrdersControllerTest {
         // then
         result
                 .andExpect(handler().handlerType(OrderController.class))
-                .andExpect(handler().methodName("getOrderByEmail")) // 실제 메서드명으로
+                .andExpect(handler().methodName("getOrderByEmail")) // 실제 메서드명으로 변경 필요
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("one@example.com"))
                 .andExpect(jsonPath("$.id").exists())
@@ -146,8 +146,8 @@ public class OrdersControllerTest {
     }
 
     @Test
-    @DisplayName("일별 주문 조회 - 성공 (GET /api/v1/orders_daily?date=YYYY-MM-DD)")
-    void listDailyOrders_success() throws Exception {
+    @DisplayName("일별 주문 조회 API")
+    void t4() throws Exception {
 
         long todayOrder = createOrderAndGetId("day@example.com", "서울 강동");
 
@@ -163,11 +163,40 @@ public class OrdersControllerTest {
         // then
         result
                 .andExpect(handler().handlerType(OrderController.class))
-                .andExpect(handler().methodName("getDailyOrders")) // 실제 메서드명으로
+                .andExpect(handler().methodName("getDailyOrders")) // 실제 메서드명으로 변경 필요
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].orderDate").exists());
+                .andExpect(jsonPath("$.orders").isArray())
+                .andExpect(jsonPath("$.orders[*].orderId").value(hasItem((int)todayOrder)))
+                .andExpect(jsonPath("$.orders[*].email").value(hasItem("day@example.com")));
+    }
+
+    @Test
+    @DisplayName("주문 취소 API")
+    void t5() throws Exception {
+
+        long id1 = createOrderAndGetId("delete@example.com", "서울 강동구");
+        long id2 = createOrderAndGetId("delete2@example.com", "서울 강동구");
+
+        // 삭제 전에 목록에 주문 두개 들어있는지 확인
+        mvc.perform(get("/api/v1/orders"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.orders[*].id").value(hasItems((int) id1, (int) id2)))
+                .andDo(print());
+
+        // 주문 1 삭제
+        ResultActions result = mvc.perform(delete("/api/v1/orders/{orderId}", id1))
+                .andDo(print());
+
+        result
+                .andExpect(handler().handlerType(OrderController.class))
+                .andExpect(handler().methodName("cancelOrder")) // 실제 메서드명으로 변경 필요
+                .andExpect(status().isNoContent());
+
+        // 삭제 후 목록에서 id1이 더 이상 보이지 않아야 함
+        mvc.perform(get("/api/v1/orders"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.orders[*].id").value(not(hasItem((int) id1))))
+                .andDo(print());
     }
 }
 
