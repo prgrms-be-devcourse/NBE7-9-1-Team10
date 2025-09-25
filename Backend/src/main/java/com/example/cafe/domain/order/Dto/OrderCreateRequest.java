@@ -1,8 +1,7 @@
-package com.example.domain.order.Dto;
+package com.example.cafe.domain.order.Dto;
 
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter

@@ -1,4 +1,4 @@
-package com.example.domain.order.Entity;
+package com.example.cafe.domain.order.Entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

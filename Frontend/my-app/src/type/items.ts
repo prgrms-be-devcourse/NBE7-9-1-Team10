@@ -5,7 +5,8 @@ export type ItemDto = {
     imageUrl: string;
 };
 export type ItemCreateRequest = {
-    name: string;
+    
+    itemName: string;
     price: number;
     imageUrl?: string;
 };
