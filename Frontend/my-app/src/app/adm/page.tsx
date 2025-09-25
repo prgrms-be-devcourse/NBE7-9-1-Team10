@@ -101,9 +101,11 @@ export default function AdminPage() {
                 
                 {/* 푸터 */}
                 <div className="flex justify-end pt-4">
+                <Link href="/adm/orders">
                     <button className="bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300">
                         주문내역
                     </button>
+                    </Link>
                 </div>
             </div>
         </div>
