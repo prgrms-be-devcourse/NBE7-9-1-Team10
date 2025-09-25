@@ -20,18 +20,32 @@ export function fetchApi(url: string, options?: RequestInit) {
 
 //일단 테스트 데이터 넣기
 
-export function getItems(): ItemDto[] {
+/*export function getItems(): ItemDto[] {
     return [
         { itemId: 1, itemName: "name1", price: 100, imageUrl: "https://tech.wonderwall.kr/_astro/nextjs.D927XOPf.png" },
         { itemId: 2, itemName: "name2", price: 200, imageUrl: "https://tech.wonderwall.kr/_astro/nextjs.D927XOPf.png" },
         { itemId: 3, itemName: "name3", price: 300, imageUrl: "https://tech.wonderwall.kr/_astro/nextjs.D927XOPf.png" }
     ];
+}*/
+
+export function getItems(): Promise<ItemDto[]> {
+    return fetchApi('/api/v1/items');
 }
 
+export function getItem(itemId: number): Promise<ItemDto> {
+    return fetchApi(`/api/v1/items/${itemId}`);
+}
 //상품 추가
 export function createItem(itemData: ItemCreateRequest): Promise<ItemDto> {
     return fetchApi('/api/v1/items', {
         method: 'POST',
+        body: JSON.stringify(itemData),
+    });
+}
+//상품 수정
+export function updateItem(itemId: number, itemData: ItemCreateRequest): Promise<ItemDto> {
+    return fetchApi(`/api/v1/items/${itemId}`, {
+        method: 'PUT',
         body: JSON.stringify(itemData),
     });
 }
