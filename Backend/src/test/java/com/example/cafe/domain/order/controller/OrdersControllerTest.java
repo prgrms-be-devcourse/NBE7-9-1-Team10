@@ -131,7 +131,8 @@ public class OrdersControllerTest {
 
         // when
         ResultActions result = mvc.perform(
-                get("/api/v1/orders/{email}", "one@example.com")
+                get("/api/v1/orders")
+                        .param("email", "one@example.com")
                         .accept(MediaType.APPLICATION_JSON)
         ).andDo(print());
 
