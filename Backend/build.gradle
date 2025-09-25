@@ -38,6 +38,8 @@ dependencies {
 	// Swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.11'
 
+	//db
+	implementation 'mysql:mysql-connector-java:8.0.33'
 }
 
 tasks.named('test') {
