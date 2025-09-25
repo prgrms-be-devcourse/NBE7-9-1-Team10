@@ -91,7 +91,7 @@ public class OrdersControllerTest {
         result
                 .andExpect(handler().handlerType(OrderController.class))
                 .andExpect(handler().methodName("orderCreateResponse"))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
 
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.email").value("test@example.com"))
@@ -131,7 +131,7 @@ public class OrdersControllerTest {
 
         // when
         ResultActions result = mvc.perform(
-                get("/api/v1/orders")
+                get("/api/v1/orders/user")
                         .param("email", "one@example.com")
                         .accept(MediaType.APPLICATION_JSON)
         ).andDo(print());
@@ -139,11 +139,10 @@ public class OrdersControllerTest {
         // then
         result
                 .andExpect(handler().handlerType(OrderController.class))
-                .andExpect(handler().methodName("getOrderByEmail")) // 실제 메서드명으로 변경 필요
+                .andExpect(handler().methodName("FindAllOrderByEmailResponse")) // 실제 메서드명으로 변경 필요
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("one@example.com"))
-                .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.items").isArray());
+                .andExpect(jsonPath("$.orders").isArray());
     }
 
     @Test
