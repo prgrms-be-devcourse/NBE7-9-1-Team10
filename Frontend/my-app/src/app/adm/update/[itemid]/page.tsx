@@ -5,9 +5,9 @@ import { updateItem,getItem } from "@/lib/client";
 import { ItemDto } from '@/type/items';
 import { useState, useEffect } from 'react';
 
-export default function UpdateItemPage({ params }: { params: { itemId: string }}) {
+export default function UpdateItemPage({ params }: { params: { itemid: string }}) {
   const router = useRouter();
-  const itemId = Number(params.itemId);
+  const itemId = Number(params.itemid);
   const [item, setItem] = useState<ItemDto | null>(null);
 
   useEffect(() => {
@@ -109,8 +109,7 @@ return (
           <div className="flex justify-end pt-4">
             <button
               type="submit"
-              className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 disabled:bg-gray-400"
-            >
+              className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 disabled:bg-gray-400">
               저장하기
             </button>
           </div>
