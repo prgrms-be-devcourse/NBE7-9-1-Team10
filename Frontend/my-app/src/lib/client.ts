@@ -45,7 +45,7 @@ export function getOrder(): OrderDto[] {
             orderid: 102,
             totalPrice: 9000,
             address: "서울시 마포구 월드컵로 45",
-            orderDate: new Date("2025-09-22T10:15:00"),
+            orderDate: new Date("2025-09-25T18:15:00"),
             items: [
                 { id: 2, name: "딸기 케이크", qty: 1 },
                 { id: 3, name: "바닐라 컵케이크", qty: 2 },

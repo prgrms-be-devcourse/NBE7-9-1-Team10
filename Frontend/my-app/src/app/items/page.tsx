@@ -23,7 +23,7 @@ export default function Home() {
             method: "GET"
         })
             .then((data) => {
-                //console.log("받은 데이터:", data);
+                console.log("받은 데이터:", data);
                 setItems(data);
             })
             .catch((err) => {
@@ -85,15 +85,18 @@ export default function Home() {
         if (emailInput.value.length === 0) {
             alert("이메일을 입력해주세요.");
             emailInput.focus();
+            return;
         }
 
         if (addressInput.value.length === 0) {
             alert("주소를 입력해주세요.");
             addressInput.focus();
+            return;
         }
 
         if (cart.length === 0) {
             alert("구매하실 제품을 추가해주세요.");
+            return;
 
         }
 
@@ -111,14 +114,15 @@ export default function Home() {
         });
 
 
-        fetchApi("/api/v1/orders", {
+        fetchApi(`/api/v1/orders`, {
             method: "POST",
             body: requestBody,
         }).then((data) => {
-            alert(data.msg);
+            
+            alert("주문 완료");
         })
             .catch((err) => {
-                alert(err);
+                alert("오류 : "+err);
             });
 
 
