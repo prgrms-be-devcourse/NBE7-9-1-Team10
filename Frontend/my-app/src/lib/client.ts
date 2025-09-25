@@ -1,5 +1,5 @@
 import { ItemDto, ItemCreateRequest } from "@/type/items";
-
+import { OrdersResponse } from "@/type/orders";
 export function fetchApi(url: string, options?: RequestInit) {
     if (options?.body) {
         const headers = new Headers(options.headers || {});
@@ -57,5 +57,8 @@ export function deleteItem(itemId: number):Promise<void>{
     return fetchApi(`/api/v1/items/${itemId}`, {
         method: 'DELETE',
     });
+}
+export function getOrders(): Promise<OrdersResponse> {
+    return fetchApi('/api/v1/orders');
 }
 
