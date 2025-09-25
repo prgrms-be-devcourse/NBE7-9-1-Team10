@@ -1,13 +1,18 @@
 # Grids & Circles
-## 팀원
-- 도석환
-- 김희영
-- 안병선
-- 이창중
-- 박민형
+
+### <span id="2">🏃팀원 소개</span>
+
+<div align="center">
+
+| <img src="https://github.com/do04080.png" width="120px;" alt=""/> | <img src="https://github.com/rogrhrh.png" width="120px;" alt=""/> | <img src="https://github.com/kheeyoung.png" width="120px;" alt=""/> | <img src="https://github.com/DEV-Cheeze.png" width="120px;" alt=""/> | <img src="https://github.com/minibr.png" width="120px;" alt=""/> |
+| :----------------------------------------------------: | :----------------------------------------------------: | :----------------------------------------------------: | :----------------------------------------------------: | :----------------------------------------------------: |
+|   [도석환](https://github.com/do04080)   |   [안병선](https://github.com/rogrhrh)   |   [김희영](https://github.com/kheeyoung)   |   [이창중](https://github.com/DEV-Cheeze)   |   [박민형](https://github.com/minibr)   |
+
+</div>
+
 ## 프로젝트 소개
 카페 주문/상품 관리 서비스
-### **프로젝트의 핵심 요구사항(MVP):**
+## **프로젝트의 핵심 요구사항(MVP):**
 
 - **CRUD 구현**
     - `POST` → Create
