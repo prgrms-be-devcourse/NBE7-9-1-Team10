@@ -1,4 +1,5 @@
 import { ItemDto, ItemCreateRequest } from "@/type/items";
+import {OrderDto} from "@/type/orders";
 
 export function fetchApi(url: string, options?: RequestInit) {
     if (options?.body) {
@@ -27,6 +28,42 @@ export function fetchApi(url: string, options?: RequestInit) {
         { itemId: 3, itemName: "name3", price: 300, imageUrl: "https://tech.wonderwall.kr/_astro/nextjs.D927XOPf.png" }
     ];
 }*/
+
+export function getOrder(): OrderDto[] {
+    return [
+        {
+            orderid: 101,
+            totalPrice: 15500,
+            address: "서울시 강남구 테헤란로 123",
+            orderDate: new Date("2025-09-20T14:30:00"),
+            items: [
+                { id: 1, name: "초코 케이크", qty: 2 },
+                { id: 3, name: "바닐라 컵케이크", qty: 1 },
+            ],
+        },
+        {
+            orderid: 102,
+            totalPrice: 9000,
+            address: "서울시 마포구 월드컵로 45",
+            orderDate: new Date("2025-09-22T10:15:00"),
+            items: [
+                { id: 2, name: "딸기 케이크", qty: 1 },
+                { id: 3, name: "바닐라 컵케이크", qty: 2 },
+            ],
+        },
+        {
+            orderid: 103,
+            totalPrice: 6000,
+            address: "서울시 종로구 세종대로 55",
+            orderDate: new Date("2025-09-23T18:45:00"),
+            items: [
+                { id: 4, name: "레몬 케이크", qty: 1 },
+                { id: 5, name: "초코 머핀", qty: 1 },
+            ],
+        },
+
+];
+}
 
 export function getItems(): Promise<ItemDto[]> {
     return fetchApi('/api/v1/items');
