@@ -2,11 +2,14 @@ package com.example.cafe.domain.order.Service;
 
 import com.example.cafe.domain.item.entity.Item;
 import com.example.cafe.domain.item.repository.ItemRepository;
+import com.example.cafe.domain.order.Dto.FindAllOrderResponse;
 import com.example.cafe.domain.order.Dto.OrderCreateRequest;
 import com.example.cafe.domain.order.Dto.OrderCreateResponse;
 import com.example.cafe.domain.order.Entity.OrderItem;
 import com.example.cafe.domain.order.Entity.Orders;
 import com.example.cafe.domain.order.Repository.OrderRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +46,12 @@ public class OrderService {
         orderRepository.save(order); //cascade로 인하여 orderitem 자동으로 생성
 
         return new OrderCreateResponse(order); //DTO로 옮겨서 반환
+    }
 
-
+    @Transactional
+    public FindAllOrderResponse findAllOrders(){
+        List<Orders> orders = orderRepository.OptimizedFindAllOrders();
+        return new FindAllOrderResponse(orders);
     }
 
 }
