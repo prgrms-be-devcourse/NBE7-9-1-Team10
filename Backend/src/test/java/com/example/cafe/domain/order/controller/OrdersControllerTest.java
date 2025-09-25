@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,13 +118,57 @@ public class OrdersControllerTest {
         // then
         result
                 .andExpect(handler().handlerType(OrderController.class))
-                .andExpect(handler().methodName("getOrders")) // 임시
+                .andExpect(handler().methodName("getOrders")) // 임시 업로드되면 실제 메서드명으로 변경
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(beforeSize + 3));
     }
 
+    @Test
+    @DisplayName("단건 조회(이메일) API")
+    void t3() throws Exception {
+        createOrderAndGetId("one@example.com", "서울 광진");
 
+        // when
+        ResultActions result = mvc.perform(
+                get("/api/v1/orders/{email}", "one@example.com")
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andDo(print());
+
+        // then
+        result
+                .andExpect(handler().handlerType(OrderController.class))
+                .andExpect(handler().methodName("getOrderByEmail")) // 실제 메서드명으로
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value("one@example.com"))
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.items").isArray());
+    }
+
+    @Test
+    @DisplayName("일별 주문 조회 - 성공 (GET /api/v1/orders_daily?date=YYYY-MM-DD)")
+    void listDailyOrders_success() throws Exception {
+
+        long todayOrder = createOrderAndGetId("day@example.com", "서울 강동");
+
+        String today = LocalDate.now().toString();
+
+        // when
+        ResultActions result = mvc.perform(
+                get("/api/v1/orders_daily")
+                        .param("date", today)
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andDo(print());
+
+        // then
+        result
+                .andExpect(handler().handlerType(OrderController.class))
+                .andExpect(handler().methodName("getDailyOrders")) // 실제 메서드명으로
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].orderDate").exists());
+    }
 }
 
 
