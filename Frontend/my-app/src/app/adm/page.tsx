@@ -65,9 +65,11 @@ export default function AdminPage() {
                             <div className="flex items-center space-x-4">
                                 <span className="font-medium w-24 text-right">{product.price.toLocaleString()}원</span>
                                 <div className="flex space-x-2">
+                                <Link href={`/adm/update/${product.itemId}`}>
                                     <button className="bg-gray-200 text-gray-700 text-sm font-semibold py-1 px-3 rounded-md hover:bg-gray-300">
                                         수정
                                     </button>
+                                    </Link>
                                     <button className="bg-blue-500 text-white text-sm font-semibold py-1 px-3 rounded-md hover:bg-blue-600">
                                         삭제
                                     </button>
