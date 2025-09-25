@@ -2,6 +2,7 @@ package com.example.cafe.domain.order.Service;
 
 import com.example.cafe.domain.item.entity.Item;
 import com.example.cafe.domain.item.repository.ItemRepository;
+import com.example.cafe.domain.order.Dto.FindAllOrderByEmailResponse;
 import com.example.cafe.domain.order.Dto.FindAllOrderResponse;
 import com.example.cafe.domain.order.Dto.OrderCreateRequest;
 import com.example.cafe.domain.order.Dto.OrderCreateResponse;
@@ -52,6 +53,13 @@ public class OrderService {
     public FindAllOrderResponse findAllOrders(){
         List<Orders> orders = orderRepository.OptimizedFindAllOrders();
         return new FindAllOrderResponse(orders);
+    }
+
+    @Transactional
+    public FindAllOrderByEmailResponse findAllOrderByEmailResponse(String email){
+        List<Orders> orders = orderRepository.OptimizedFindAllOrdersByEmail(email);
+
+        return new FindAllOrderByEmailResponse(email, orders);
     }
 
 }
