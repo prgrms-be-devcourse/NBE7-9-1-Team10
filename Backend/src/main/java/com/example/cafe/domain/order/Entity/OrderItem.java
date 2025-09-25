@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @Getter
 public class OrderItem {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "orderitemId")
     private Long id;
 
