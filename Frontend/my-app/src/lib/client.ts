@@ -13,6 +13,10 @@ export function fetchApi(url: string, options?: RequestInit) {
                 const rsData = await res.json();
                 throw new Error(rsData.msg || "요청 실패");
             }
+            if (res.status === 204) {
+                // 2. 내용이 없을 경우, .json()을 호출하지 않고 null이나 undefined를 반환합니다.
+                return null; 
+            }
             return res.json();
         }
     );
@@ -47,6 +51,11 @@ export function updateItem(itemId: number, itemData: ItemCreateRequest): Promise
     return fetchApi(`/api/v1/items/${itemId}`, {
         method: 'PUT',
         body: JSON.stringify(itemData),
+    });
+}
+export function deleteItem(itemId: number):Promise<void>{
+    return fetchApi(`/api/v1/items/${itemId}`, {
+        method: 'DELETE',
     });
 }
 
