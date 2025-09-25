@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ItemDto } from '@/type/items';
-import { getItems } from '@/lib/client';
+import { getItems,deleteItem  } from '@/lib/client';
 import Link from 'next/link';
 
 export default function AdminPage() {
@@ -23,6 +23,23 @@ export default function AdminPage() {
 
         loadItems();
     }, []);
+
+    const handleDeleteItem = async (itemId: number) => {
+        // 사용자에게 정말 삭제할 것인지 확인받습니다.
+        if (!window.confirm(`정말로 상품(ID: ${itemId})을 삭제하시겠습니까?`)) {
+            return;
+        }
+
+        try {
+            await deleteItem(itemId);
+            alert('상품이 성공적으로 삭제되었습니다.');
+            // 성공 시 화면의 목록에서도 해당 상품을 제거하여 바로 반영합니다.
+            setProducts(products.filter(product => product.itemId !== itemId));
+        } catch (error) {
+            console.error('삭제 실패:', error);
+            alert('상품 삭제에 실패했습니다.');
+        }
+    };
 
     // 로딩 중 UI
     if (isLoading) {
@@ -66,11 +83,14 @@ export default function AdminPage() {
                                 <span className="font-medium w-24 text-right">{product.price.toLocaleString()}원</span>
                                 <div className="flex space-x-2">
                                 <Link href={`/adm/update/${product.itemId}`}>
-                                    <button className="bg-gray-200 text-gray-700 text-sm font-semibold py-1 px-3 rounded-md hover:bg-gray-300">
+                                    <button 
+                                    className="bg-gray-200 text-gray-700 text-sm font-semibold py-1 px-3 rounded-md hover:bg-gray-300">
                                         수정
                                     </button>
                                     </Link>
-                                    <button className="bg-blue-500 text-white text-sm font-semibold py-1 px-3 rounded-md hover:bg-blue-600">
+                                    <button 
+                                    onClick={() => handleDeleteItem(product.itemId)}
+                                    className="bg-blue-500 text-white text-sm font-semibold py-1 px-3 rounded-md hover:bg-blue-600">
                                         삭제
                                     </button>
                                 </div>
