@@ -36,6 +36,7 @@ public class Orders {
         Orders orders = new Orders(customerEmail, address);
         for(OrderItem orderItem : orderItems){
             orders.getOrderItems().add(orderItem);
+            orderItem.setOrder(orders); //DB에는 적용되는데 영속성 컨텍스트에도 업로드를 해야합니다. jpa가 영속성 컨텍스트부터 봅니다.
         }
 
         return orders;

@@ -29,4 +29,8 @@ public class OrderItem {
         orderItem.qty = qty;
         return orderItem;
     }
+
+    public void setOrder(Orders order) {
+        this.order = order;
+    }
 }
