@@ -56,6 +56,7 @@ return (
               type="text"
               id="itemName"
               name="itemName" // name 속성으로 input을 식별합니다.
+              maxLength={250}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               required
             />
@@ -86,6 +87,7 @@ return (
               type="text"
               id="imageUrl"
               name="imageUrl"
+              maxLength={250}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
