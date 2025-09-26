@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {fetchApi} from "@/lib/client";
 
 import {Order} from "@/type/orders";
@@ -8,9 +8,42 @@ import {Order} from "@/type/orders";
 
 
 
+
 export default function Home() {
 
     const [orders, setOrders] = useState<Order[]>([]);
+    const [allOrders, setAllOrders] = useState<Order[]>([]); // 전체 주문 저장용
+    const [viewOption, setViewOption] = useState("전체주문");
+
+
+    function changeViewOption() {
+        let num = "3";
+        switch (viewOption) {
+            case "전체주문":
+                setViewOption("배송준비");
+                num = "0";
+                break;
+            case "배송준비":
+                setViewOption("배송중");
+                num = "1";
+                break;
+            case "배송중":
+                setViewOption("배송완료");
+                num = "2";
+                break;
+            default:
+                setViewOption("전체주문");
+                num = "3";
+        }
+
+        if (num === "3") {
+            setOrders(allOrders);
+        } else {
+            setOrders(allOrders.filter((order) => order.deliveryStatus == num));
+        }
+
+    }
+
 
     function handleSubmit(e: any) {
         e.preventDefault();
@@ -21,9 +54,8 @@ export default function Home() {
 
         fetchApi(`/api/v1/orders/user?email=${emailInput}`, {method: "GET",})
             .then((data) => {
-
                 setOrders(data.orders);
-
+                setAllOrders(data.orders);
                 if (data.orders.length === 0) {
                     alert("검색결과가 없습니다.");
                 }
@@ -37,10 +69,17 @@ export default function Home() {
     }
 
     function cutDate(date: string){
-        const dates = date.split(".")[0].replace("T"," ");
-
-        return dates;
+        return date.split(".")[0].replace("T"," ");
     }
+
+    function getState(num: string){
+       if(num=="0") return "배송준비"
+        if(num=="1") return "배송중"
+
+        return "배송완료";
+    }
+
+
 
     return (
         <div className="flex flex-col justify-center rounded-2xl bg-white md:space-x-8">
@@ -60,11 +99,22 @@ export default function Home() {
                     </form>
                 </div>
 
+                {/* 조회 옵션 */}
+                <div className="flex justify-center">
+                    <button
+                        type="button" onClick={changeViewOption}
+                        className="inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-black dark:text-white bg-white dark:bg-[#1E2028] border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-[#252731] focus:outline-none"
+                    >
+                        {viewOption}
+                    </button>
+                </div>
+
                 <ul className="flex flex-col">
                     {orders != null && orders.map((order) => (
-                        <li key={order.orderId} className="border flex flex-col m-2 p-2 gap-2" >
+                        <li key={order.orderId} className="border flex flex-col m-2 p-2 gap-2">
                             {/* 주문 정보 */}
 
+                            <div>{getState(order.deliveryStatus)}</div>
 
 
                             <div className="items-center">
@@ -75,7 +125,6 @@ export default function Home() {
                                         cutDate(order.orderDate)
                                     }
                                     </div>
-
                                 </div>
                                 <div>
                                     배송 주소 : {order.address}
@@ -85,18 +134,18 @@ export default function Home() {
                                 </div>
 
 
-                            {/* 주문 아이템 리스트 */}
-                            {order.items != null && order.items.length > 0 && (
-                                <ul className="flex flex-col ml-4 mt-2 gap-1">
-                                    {order.items.map((item) => (
-                                        <li key={item.id} className="border p-2 flex justify-between items-center">
-                                            <div>{item.name}</div>
-                                            <div>{item.qty}개</div>
+                                {/* 주문 아이템 리스트 */}
+                                {order.items != null && order.items.length > 0 && (
+                                    <ul className="flex flex-col ml-4 mt-2 gap-1">
+                                        {order.items.map((item) => (
+                                            <li key={item.id} className="border p-2 flex justify-between items-center">
+                                                <div>{item.name}</div>
+                                                <div>{item.qty}개</div>
 
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
 
 

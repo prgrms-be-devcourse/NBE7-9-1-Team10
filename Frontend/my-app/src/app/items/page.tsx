@@ -24,7 +24,6 @@ export default function Home() {
             method: "GET"
         })
             .then((data) => {
-                console.log("받은 데이터:", data);
                 setItems(data);
             })
             .catch((err) => {
@@ -126,9 +125,6 @@ export default function Home() {
                 alert("오류 : "+err);
             });
 
-
-        //console.log("전송할 요청 본문:", requestBody);
-
     };
 
 
@@ -206,9 +202,7 @@ export default function Home() {
                     </button>
 
                 </form>
-                <div className="flex justify-center">
-                    <Link href={"/items/my_order"}>주문 내역 조회</Link>
-                </div>
+
 
             </div>
 
