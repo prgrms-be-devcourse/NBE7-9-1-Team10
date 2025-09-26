@@ -133,14 +133,14 @@ export default function Home() {
 
 
     return (
-        <div className="flex flex-col md:flex-row justify-center rounded-2xl bg-white md:space-x-8 ">
+        <div className="flex md:flex-row justify-center rounded-2xl bg-white md:space-x-8 ">
             {/* 상품 목록 */}
-            <div className="p-4">
+            <div className="p-4 flex-1">
                 <h5 className="font-bold">상품 목록</h5>
                 <hr/>
                 <ul className="flex flex-col">
                     {items != null && items.map((item) => (
-                        <li className="border flex flex-row m-2 p-2 justify-between items-center gap-8"
+                        <li className="border flex flex-row m-2 p-2 justify-between items-center"
                             key={item.itemId}>
 
                             <img className="" src={item.imageUrl} alt="" width={50}/>
@@ -149,7 +149,7 @@ export default function Home() {
 
                             <div className="text-gray-600">{item.price}원</div>
 
-                            <button className="border rounded-sm" onClick={() => addToCart(item)}>추가</button>
+                            <button className="bg-black text-white text-sm p-1 border rounded-sm" onClick={() => addToCart(item)}>추가</button>
 
 
                         </li>
@@ -158,7 +158,7 @@ export default function Home() {
             </div>
 
             {/* Summary and Form */}
-            <div className="p-4 bg-gray-200 rounded-r-2xl">
+            <div className="p-4 bg-gray-200 rounded-r-2xl flex-shrink-0">
                 <div>
                     <h5 className="font-bold m-0 p-0">Summary</h5>
                 </div>

@@ -67,7 +67,7 @@ export default function Home() {
 
 
 
-                            <div className=" gap-15 items-center">
+                            <div className="items-center">
                                 {/* 주문 날짜 */}
                                 <div>
                                     <div>
@@ -81,7 +81,7 @@ export default function Home() {
                                     배송 주소 : {order.address}
                                 </div>
                                 <div>
-                                    총 가격 : {order.totalPrice}
+                                    총 가격 : {order.totalPrice}원
                                 </div>
 
 
