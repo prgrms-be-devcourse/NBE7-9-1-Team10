@@ -58,20 +58,24 @@ public class Orders {
     }
 
     public int calculateCurrentDeliveryStatus() {
+        /*
+        issue #92에 의해 수정된 내용
+        전날 14시 이전의 주문은 배송완료 (기존엔 2일전일 경우 배송완료로 확인)
+        전날 14시 이후 당일 14시 이전은 배송중
+        당일 14시 이후는 배송준비
+        기준으로 변경
+         */
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime orderTime = this.orderDate;
-
         LocalDateTime today2PM = now.withHour(14).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime yesterday2PM = today2PM.minusDays(1);
 
-        LocalDateTime orderPlus2Days = orderTime.plusDays(2);
-
-        if (now.isAfter(orderPlus2Days)) {
-            return 2;
-        } else if (orderTime.isAfter(yesterday2PM) && orderTime.isBefore(today2PM)) {
-            return 1;
+        if (orderDate.isBefore(yesterday2PM)) {
+            return 2; // 완료: 어제 14시 이전
+        } else if (orderDate.isBefore(today2PM)) {
+            // 여기로 들어왔다는 건 orderDate >= 어제 14시 이고 오늘 14시 이전
+            return 1; // 중
         } else {
-            return 0;
+            return 0; // 준비: 오늘 14시 이후(포함)
         }
     }
 
