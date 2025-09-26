@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { createItem } from "@/lib/client";
+import { useAuth } from '@/context/AuthContext'
 
 export default function NewItemPage() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function NewItemPage() {
     const price = form.price;
     const imageUrl = form.imageUrl;
     const itemData = { itemName: itemName.value, price: Number(price.value), imageUrl: imageUrl.value };
+    const {user} = useAuth();
     
     if (itemName.value.length === 0) {
         alert("이름을 입력해주세요.");
@@ -30,8 +32,12 @@ export default function NewItemPage() {
         price.focus();
         return;
       }
+      if (!user) {
+        alert('사용자 정보가 없습니다. 다시 로그인 해주세요.');
+        return;
+    }
 
-    createItem(itemData).then(() => {
+    createItem(user.email,itemData).then(() => {
       router.push('/adm');
     })
     .catch((error) => {

@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import { ItemDto } from '@/type/items';
 import { getItems,deleteItem  } from '@/lib/client';
+import { useAuth } from '@/context/AuthContext'
 import Link from 'next/link';
 
 export default function AdminPage() {
     const [products, setProducts] = useState<ItemDto[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const {user} = useAuth();
 
     useEffect(() => {
         const loadItems = async () => {
@@ -30,8 +32,13 @@ export default function AdminPage() {
             return;
         }
 
+        if (!user) {
+            alert('사용자 정보가 없습니다. 다시 로그인 해주세요.');
+            return;
+        }
+
         try {
-            await deleteItem(itemId);
+            await deleteItem(user.email, itemId);
             alert('상품이 성공적으로 삭제되었습니다.');
             // 성공 시 화면의 목록에서도 해당 상품을 제거하여 바로 반영합니다.
             setProducts(products.filter(product => product.itemId !== itemId));

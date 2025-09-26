@@ -1,22 +1,25 @@
 import { ItemDto, ItemCreateRequest } from "@/type/items";
 import { OrdersResponse } from "@/type/orders";
+import { Sale } from "@/type/sales";
 import { UserRole } from "@/type/user";
 
-export function fetchApi(url: string, options?: RequestInit) {
-    if (options?.body) {
-        const headers = new Headers(options.headers || {});
+export function fetchApi(url: string, options?: RequestInit & { headers?: { [key: string]: string } }) {
+    const newOptions: RequestInit = { ...options, credentials: 'include' };
+    
+    // 기존 헤더와 새로 받은 헤더를 병합합니다.
+    const headers = new Headers(newOptions.headers || {});
+    if (newOptions.body) {
         headers.set("Content-Type", "application/json");
-        options.headers = headers;
     }
+    newOptions.headers = headers;
 
-    return fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}${url}`, options).then(
+    return fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}${url}`, newOptions).then(
         async (res) => {
             if (!res.ok) {
                 const rsData = await res.json();
                 throw new Error(rsData.msg || "요청 실패");
             }
             if (res.status === 204) {
-                // 2. 내용이 없을 경우, .json()을 호출하지 않고 null이나 undefined를 반환합니다.
                 return null; 
             }
             return res.json();
@@ -42,22 +45,25 @@ export function getItem(itemId: number): Promise<ItemDto> {
     return fetchApi(`/api/v1/items/${itemId}`);
 }
 //상품 추가
-export function createItem(itemData: ItemCreateRequest): Promise<ItemDto> {
+export function createItem(userEmail: string,itemData: ItemCreateRequest): Promise<ItemDto> {
     return fetchApi('/api/v1/items', {
         method: 'POST',
+        headers: { 'User-Email': userEmail },
         body: JSON.stringify(itemData),
     });
 }
 //상품 수정
-export function updateItem(itemId: number, itemData: ItemCreateRequest): Promise<ItemDto> {
+export function updateItem(userEmail: string,itemId: number, itemData: ItemCreateRequest): Promise<ItemDto> {
     return fetchApi(`/api/v1/items/${itemId}`, {
         method: 'PUT',
+        headers: { 'User-Email': userEmail },
         body: JSON.stringify(itemData),
     });
 }
-export function deleteItem(itemId: number):Promise<void>{
+export function deleteItem(userEmail: string,itemId: number):Promise<void>{
     return fetchApi(`/api/v1/items/${itemId}`, {
         method: 'DELETE',
+        headers: { 'User-Email': userEmail },
     });
 }
 export function getOrders(status?: string): Promise<OrdersResponse> {
@@ -72,4 +78,7 @@ export function login(email: string): Promise<UserRole> {
         method: 'POST',
         body: JSON.stringify({ email }),
     });
+}
+export function getSale(): Promise<Sale> {
+    return fetchApi('/api/v1/orders/sales');
 }
