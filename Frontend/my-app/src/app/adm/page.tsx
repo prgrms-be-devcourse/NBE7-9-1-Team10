@@ -60,9 +60,10 @@ export default function AdminPage() {
                     </Link>
                 </div>
 
-                {/* 상품 목록 */}
-                <div className="space-y-2">
-                    {products.map((product) => (
+                 {/* 상품 목록 */}
+                 <div className="space-y-2">
+                    {/*상품 상태가 품절이면 보이지 않음*/}
+                     {products.filter(product => product.status === 'onSale').map((product) => (
                         <div key={product.itemId} className="flex items-center justify-between p-4 border rounded-lg bg-gray-50/50">
                             <div className="flex items-center space-x-4">
                             <img
@@ -90,7 +91,7 @@ export default function AdminPage() {
                                     </Link>
                                     <button 
                                     onClick={() => handleDeleteItem(product.itemId)}
-                                    className="bg-blue-500 text-white text-sm font-semibold py-1 px-3 rounded-md hover:bg-blue-600">
+                                    className={`text-sm font-semibold py-1 px-3 rounded-md bg-blue-500 text-white hover:bg-blue-600'}`}>
                                         삭제
                                     </button>
                                 </div>
