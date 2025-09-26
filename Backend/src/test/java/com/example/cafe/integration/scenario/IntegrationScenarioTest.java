@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -78,6 +79,16 @@ class IntegrationScenarioTest {
         });
     }
 
+    private Map<String, Object> getItem(long itemId) throws Exception {
+        ResultActions res = mvc.perform(
+                        get("/api/v1/items/{itemId}", itemId)
+                                .accept(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+        return readMap(res);
+    }
+
     //------------------------ TEST ------------------------
     @Test
     @DisplayName("mvp 시나리오: 상품추가(4) -> 주문 -> 상품수정 -> 상품제거 -> 이메일 단건주문조회")
@@ -127,8 +138,37 @@ class IntegrationScenarioTest {
                 .andExpect(jsonPath("$.orders").isArray());
 
         // 여기서 테스트 진행
-        // 2번 상품의 정보가 수정되었는지 확인
-        // 3번 상풍이 제거되었는지 확인
-        // totalprice값이 예상값과 같은지 확인
+        // 2번 상품의 수정 여부 확인
+        // 3번 상품이 제거 여부 확인
+        // totalprice값이 원래 값과 같은지 확인하기
+        Map<String, Object> orderByEmail = readMap(getOrderRes);
+        List<Map<String, Object>> orders = (List<Map<String, Object>>) orderByEmail.get("orders");
+        //orders값이 들어왔는지 확인
+        assertThat(orders).isNotEmpty();
+
+        //가장 최근 주문(현재주문) 가져오기 -> id맞는지 확인하기
+        Map<String, Object> currentOrder = orders.get(orders.size() - 1);
+        assertThat(((Number) currentOrder.get("orderId")).longValue()).isEqualTo(orderId);
+
+        //주문된 아이템 가져오기
+        List<Map<String, Object>> orderItems = (List<Map<String, Object>>) currentOrder.get("items");
+
+        //상품이 순서대로 들어간다생각하고 2번째, 3번째 아이디 가져오기
+        long itemId2FromOrder = ((Number)(orderItems.get(1).get("id"))).longValue();
+        long itemId3FromOrder = ((Number)(orderItems.get(2).get("id"))).longValue();
+
+        //2번 아이템 수정 여부 확인 -> db에서 변경된 값 확인
+        Map<String, Object> currentItem2 = getItem(itemId2FromOrder);
+        assertThat(((Number) currentItem2.get("price")).longValue()).isEqualTo(3800);
+        assertThat(((String) currentItem2.get("itemName"))).isEqualTo("바닐라라떼");
+
+        //3번 아이템 삭제 여부 확인 -> db에서 변경된 값 확인
+        Map<String, Object> currentItem3 = getItem(itemId3FromOrder);
+        assertThat(currentItem3).isNotNull();
+        assertThat(((String) currentItem3.get("status"))).isEqualTo("noQty");
+
+        //총 가격이 원래 주문한 가격과 맞는지 확인
+        assertThat(((Number) currentOrder.get("totalPrice")).intValue()).isEqualTo((2000*2)+(3500*1)+(3300*3)+(4000*4));
+
     }
 }
