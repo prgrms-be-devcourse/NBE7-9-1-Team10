@@ -21,8 +21,6 @@ export default function Home() {
 
         fetchApi(`/api/v1/orders/user?email=${emailInput}`, {method: "GET",})
             .then((data) => {
-                console.log(data);
-
                 setOrders(data.orders);
 
                 if (data.orders.length === 0) {
@@ -38,9 +36,7 @@ export default function Home() {
     }
 
     function cutDate(date: string){
-        const dates = date.split(".")[0].replace("T"," ");
-
-        return dates;
+        return date.split(".")[0].replace("T"," ");
     }
 
     function getState(num: string){
