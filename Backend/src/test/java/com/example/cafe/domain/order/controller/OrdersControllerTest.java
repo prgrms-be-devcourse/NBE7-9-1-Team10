@@ -3,6 +3,7 @@ package com.example.cafe.domain.order.controller;
 import com.example.cafe.domain.item.entity.Item;
 import com.example.cafe.domain.item.repository.ItemRepository;
 import com.example.cafe.domain.order.Controller.OrderController;
+import com.example.cafe.domain.order.Entity.Orders;
 import com.example.cafe.domain.order.Repository.OrderRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +92,7 @@ public class OrdersControllerTest {
         // then 결과를 이렇게 예상한다
         result
                 .andExpect(handler().handlerType(OrderController.class))
-                .andExpect(handler().methodName("orderCreateResponse"))
+                .andExpect(handler().methodName("createOrder"))
                 .andExpect(status().isCreated())
 
                 .andExpect(jsonPath("$.id").exists())
@@ -117,7 +119,7 @@ public class OrdersControllerTest {
         // then
         result
                 .andExpect(handler().handlerType(OrderController.class))
-                .andExpect(handler().methodName("fIndAllOrderResponse"))
+                .andExpect(handler().methodName("getAllOrders"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orders").isArray())
                 .andExpect(jsonPath("$.orders[*].orderId").value(hasItems((int) id1, (int) id2)))
@@ -139,14 +141,14 @@ public class OrdersControllerTest {
         // then
         result
                 .andExpect(handler().handlerType(OrderController.class))
-                .andExpect(handler().methodName("FindAllOrderByEmailResponse")) // 실제 메서드명으로 변경 필요
+                .andExpect(handler().methodName("findAllOrderByEmailResponse"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("one@example.com"))
                 .andExpect(jsonPath("$.orders").isArray());
     }
 
     @Test
-    @DisplayName("일별 주문 조회 API")
+    @DisplayName("NOT USED_일별 주문 조회 API")
     void t4() throws Exception {
 
         long todayOrder = createOrderAndGetId("day@example.com", "서울 강동");
@@ -171,7 +173,7 @@ public class OrdersControllerTest {
     }
 
     @Test
-    @DisplayName("주문 취소 API")
+    @DisplayName("NOT USED_주문 취소 API")
     void t5() throws Exception {
 
         long id1 = createOrderAndGetId("delete@example.com", "서울 강동구");
@@ -180,7 +182,7 @@ public class OrdersControllerTest {
         // 삭제 전에 목록에 주문 두개 들어있는지 확인
         mvc.perform(get("/api/v1/orders"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.orders[*].id").value(hasItems((int) id1, (int) id2)))
+                .andExpect(jsonPath("$.orders[*].orderId").value(hasItems((int) id1, (int) id2)))
                 .andDo(print());
 
         // 주문 1 삭제
@@ -195,7 +197,82 @@ public class OrdersControllerTest {
         // 삭제 후 목록에서 id1이 더 이상 보이지 않아야 함
         mvc.perform(get("/api/v1/orders"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.orders[*].id").value(not(hasItem((int) id1))))
+                .andExpect(jsonPath("$.orders[*].orderId").value(not(hasItem((int) id1))))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("배송 준비 상태 확인 API")
+    void t6() throws Exception {
+        long id1 = createOrderAndGetId("test@example.com", "서울 광진");
+        Orders order = orderRepository.findById(id1).get();
+        LocalDateTime now = LocalDateTime.now();
+
+        // 현재가 14시 이후면 내일로 밀기 -> 무조건 배송준비상태
+        order.updateOrderDate((now.getHour() >= 14 ? now.plusDays(1) : now));
+        orderRepository.flush();
+
+        ResultActions result = mvc.perform(
+                get("/api/v1/orders/delivery-ready")
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andDo(print());
+
+        result
+                .andExpect(handler().handlerType(OrderController.class))
+                .andExpect(handler().methodName("getDeliveryReadyOrders"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.orders").isArray())
+                .andExpect(jsonPath("$.orders[*].orderId").value(hasItem((int)id1)))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("배송 중 상태 확인 API")
+    void t7() throws Exception {
+        long id1 = createOrderAndGetId("test@example.com", "서울 광진");
+        Orders order = orderRepository.findById(id1).get();
+        LocalDateTime now = LocalDateTime.now();
+
+        // 현재가 14시 전이면 어제로 보내기
+        order.updateOrderDate((now.getHour() < 14 ? now : now.minusDays(1)));
+        orderRepository.flush();
+
+        ResultActions result = mvc.perform(
+                get("/api/v1/orders/delivery-in-progress")
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andDo(print());
+
+        result
+                .andExpect(handler().handlerType(OrderController.class))
+                .andExpect(handler().methodName("getDeliveryInProgressOrders"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.orders").isArray())
+                .andExpect(jsonPath("$.orders[*].orderId").value(hasItem((int)id1)))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("배송 완료 상태 확인 API")
+    void t8() throws Exception {
+        long id1 = createOrderAndGetId("test@example.com", "서울 광진");
+        Orders order = orderRepository.findById(id1).get();
+        LocalDateTime now = LocalDateTime.now();
+
+        //2시 이후면 하루전, 아니면 이틀전
+        order.updateOrderDate((now.getHour() >= 14 ? now.minusDays(2) : now.minusDays(1)));
+        orderRepository.flush();
+
+        ResultActions result = mvc.perform(
+                get("/api/v1/orders/delivery-completed")
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andDo(print());
+
+        result
+                .andExpect(handler().handlerType(OrderController.class))
+                .andExpect(handler().methodName("getDeliveryCompletedOrders"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.orders").isArray())
+                .andExpect(jsonPath("$.orders[*].orderId").value(hasItem((int)id1)))
                 .andDo(print());
     }
 }
