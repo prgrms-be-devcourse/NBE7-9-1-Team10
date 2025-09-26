@@ -23,7 +23,7 @@ public class FindAllOrderDto {
         this.email = order.getCustomerEmail();
         this.address = order.getAddress();
         this.orderDate = order.getOrderDate();
-        this.totalPrice = order.totalPrice();
+        this.totalPrice = order.getTotalPrice();
         this.deliveryStatus = order.calculateCurrentDeliveryStatus();
         this.items = order.
                 getOrderItems().

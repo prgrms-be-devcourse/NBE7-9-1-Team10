@@ -29,9 +29,20 @@ public class OrderService {
     @Transactional
     public OrderCreateResponse createOrder(OrderCreateRequest request){
 
+        /*
+          issue #76에 의해 추가된 로직
+
+          기존 방식: OrderItems의 item 추가를 위해
+          request시 받아오는 여러개의 item들을 리스트로 묶어 전체 item findAll후
+          loop하여 request에 해당하는 아이템 객체들만 뽑아서 추가했는데
+          이러면 데이터가 커질 경우 loop횟수가 많아질것 같아서 안좋아 보입니다.
+
+          수정 : 특정 item id만 리스트로 따와서 in절로 필요한 item객체만 찾은 후 담았습니다.
+         */
+        List<Long> itemIds = request.getItems().stream().map(m -> m.getId()).toList();
 
         //Map<Long, Item>으로 구한다음 매핑하면 쿼리 하나로 가능
-        Map<Long, Item> itemMap = itemRepository.findAll().stream()
+        Map<Long, Item> itemMap = itemRepository.findSpecificItems(itemIds).stream()
                 .collect(Collectors.toMap(Item::getItemId, item -> item));
         //쿼리 1개로 아이템 목록 찾기 (최적화)
         //id에 대응하는 item 객체 Map 반환
@@ -44,6 +55,7 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         Orders order = Orders.createOrder(request.getEmail(), request.getAddress(), orderItems); //item들 다 담은 orderitems order로 저장
+        order.setTotalPrice();
         orderRepository.save(order); //cascade로 인하여 orderitem 자동으로 생성
 
         return new OrderCreateResponse(order); //DTO로 옮겨서 반환
