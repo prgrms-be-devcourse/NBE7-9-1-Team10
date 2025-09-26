@@ -82,6 +82,15 @@ public class OrdersControllerTest {
         return objectMapper.readTree(r.getResponse().getContentAsString()).get("id").asLong();
     }
 
+    //시간대별 주문 생성
+    private long createOrderAt(LocalDateTime date) throws Exception {
+        long id =createOrderAndGetId("test@example.com", "서울 강동");
+        Orders order = orderRepository.findById(id).orElseThrow();
+        order.updateOrderDate(date);
+        orderRepository.flush();
+        return id;
+    }
+
     //------------------------ 테스트 ------------------------
     @Test
     @DisplayName("주문 생성 API")
@@ -204,13 +213,8 @@ public class OrdersControllerTest {
     @Test
     @DisplayName("배송 준비 상태 확인 API")
     void t6() throws Exception {
-        long id1 = createOrderAndGetId("test@example.com", "서울 광진");
-        Orders order = orderRepository.findById(id1).get();
         LocalDateTime now = LocalDateTime.now();
-
-        // 현재가 14시 이후면 내일로 밀기 -> 무조건 배송준비상태
-        order.updateOrderDate((now.getHour() >= 14 ? now.plusDays(1) : now));
-        orderRepository.flush();
+        long id1 = createOrderAt((now.getHour() >= 14 ? now.plusDays(1) : now));
 
         ResultActions result = mvc.perform(
                 get("/api/v1/orders/delivery-ready")
@@ -229,13 +233,8 @@ public class OrdersControllerTest {
     @Test
     @DisplayName("배송 중 상태 확인 API")
     void t7() throws Exception {
-        long id1 = createOrderAndGetId("test@example.com", "서울 광진");
-        Orders order = orderRepository.findById(id1).get();
         LocalDateTime now = LocalDateTime.now();
-
-        // 현재가 14시 전이면 어제로 보내기
-        order.updateOrderDate((now.getHour() < 14 ? now : now.minusDays(1)));
-        orderRepository.flush();
+        long id1 = createOrderAt((now.getHour() < 14 ? now : now.minusDays(1)));
 
         ResultActions result = mvc.perform(
                 get("/api/v1/orders/delivery-in-progress")
@@ -254,13 +253,8 @@ public class OrdersControllerTest {
     @Test
     @DisplayName("배송 완료 상태 확인 API")
     void t8() throws Exception {
-        long id1 = createOrderAndGetId("test@example.com", "서울 광진");
-        Orders order = orderRepository.findById(id1).get();
         LocalDateTime now = LocalDateTime.now();
-
-        //2시 이후면 하루전, 아니면 이틀전
-        order.updateOrderDate((now.getHour() >= 14 ? now.minusDays(2) : now.minusDays(1)));
-        orderRepository.flush();
+        long id1 = createOrderAt((now.getHour() >= 14 ? now.minusDays(2) : now.minusDays(1)));
 
         ResultActions result = mvc.perform(
                 get("/api/v1/orders/delivery-completed")
