@@ -21,6 +21,7 @@ export default function Home() {
 
         fetchApi(`/api/v1/orders/user?email=${emailInput}`, {method: "GET",})
             .then((data) => {
+                console.log(data);
 
                 setOrders(data.orders);
 
@@ -40,6 +41,13 @@ export default function Home() {
         const dates = date.split(".")[0].replace("T"," ");
 
         return dates;
+    }
+
+    function getState(num: string){
+       if(num=="0") return "배송준비"
+        if(num=="1") return "배송중"
+
+        return "배송완료";
     }
 
     return (
@@ -65,6 +73,7 @@ export default function Home() {
                         <li key={order.orderId} className="border flex flex-col m-2 p-2 gap-2" >
                             {/* 주문 정보 */}
 
+                            <div>{getState(order.deliveryStatus)}</div>
 
 
                             <div className="items-center">
