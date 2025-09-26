@@ -59,19 +59,15 @@ public class Orders {
 
     public int calculateCurrentDeliveryStatus() {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime orderTime = this.orderDate;
+        LocalDateTime today2PM = this.orderDate.withHour(14).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime nextDay2PM = today2PM.plusDays(1);
 
-        LocalDateTime today2PM = now.withHour(14).withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime yesterday2PM = today2PM.minusDays(1);
-
-        LocalDateTime orderPlus2Days = orderTime.plusDays(2);
-
-        if (now.isAfter(orderPlus2Days)) {
-            return 2;
-        } else if (orderTime.isAfter(yesterday2PM) && orderTime.isBefore(today2PM)) {
-            return 1;
+        if (now.isBefore(today2PM)) {
+            return 0; // 배송준비 (당일 오후 2시 이전)
+        } else if (now.isBefore(nextDay2PM)) {
+            return 1; // 배송중 (다음날 오후 2시 이전)
         } else {
-            return 0;
+            return 2; // 배송완료 (다음날 오후 2시 이후)
         }
     }
 
