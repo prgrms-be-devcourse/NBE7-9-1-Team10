@@ -17,26 +17,26 @@ export default function Home() {
 
 
     function changeViewOption() {
-        let num = "3";
+        let num = 3;
         switch (viewOption) {
             case "전체주문":
                 setViewOption("배송준비");
-                num = "0";
+                num = 0;
                 break;
             case "배송준비":
                 setViewOption("배송중");
-                num = "1";
+                num = 1;
                 break;
             case "배송중":
                 setViewOption("배송완료");
-                num = "2";
+                num = 2;
                 break;
             default:
                 setViewOption("전체주문");
-                num = "3";
+                num = 3;
         }
 
-        if (num === "3") {
+        if (num === 3) {
             setOrders(allOrders);
         } else {
             setOrders(allOrders.filter((order) => order.deliveryStatus == num));
@@ -72,9 +72,9 @@ export default function Home() {
         return date.split(".")[0].replace("T"," ");
     }
 
-    function getState(num: string){
-       if(num=="0") return "배송준비"
-        if(num=="1") return "배송중"
+    function getState(num: number){
+       if(num==0) return "배송준비"
+        if(num==1) return "배송중"
 
         return "배송완료";
     }

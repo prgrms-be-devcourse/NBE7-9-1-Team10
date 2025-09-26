@@ -2,39 +2,44 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { login } from '@/lib/client';
+import { login as loginApi } from '@/lib/client'; // API 함수 이름과 겹치므로 별칭 사용
+import { useAuth } from '@/context/AuthContext'; // useAuth 훅 import
 
 export default function HomePage() {
-
-  const router = useRouter();
+    const router = useRouter();
+    const { login } = useAuth(); // Context의 login 함수를 가져옵니다.
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) {
-        alert('이메일을 입력해주세요.');
-        return;
-    }
-    setIsLoading(true);
-
-    try {
-        const response = await login(email);
-        // 백엔드에서 받은 role에 따라
-        if (response.role === 'ADMIN') {
-            router.push('/admin'); // 관리자 페이지로 이동
-        } else {
-            router.push('/items'); // 사용자 페이지로 이동
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email) {
+            alert('이메일을 입력해주세요.');
+            return;
         }
-    } catch (error) {
-        console.error(error);
-        alert('로그인에 실패했습니다. 이메일을 확인해주세요.');
-    } finally {
-        setIsLoading(false);
-    }
-};
+        setIsLoading(true);
 
-  return (
+        try {
+            const response = await loginApi(email);
+            
+            // 1. API 성공 응답으로 전역 상태(Context)를 업데이트합니다.
+            login({ email: response.email, role: response.role });
+
+            // 2. 역할에 따라 페이지를 이동시킵니다.
+            if (response.role === 'admin') {
+                router.push('/adm');
+            } else {
+                router.push('/items');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('로그인에 실패했습니다. 이메일을 확인해주세요.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
         <main className="flex min-h-screen flex-col items-center justify-center p-24">
             <div className="w-full max-w-sm text-center">
                 <h1 className="text-4xl font-bold mb-8">

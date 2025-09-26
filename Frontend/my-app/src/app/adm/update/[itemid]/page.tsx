@@ -4,11 +4,13 @@ import { useRouter } from "next/navigation";
 import { updateItem,getItem } from "@/lib/client";
 import { ItemDto } from '@/type/items';
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext'
 
 export default function UpdateItemPage({ params }: { params: { itemid: string }}) {
   const router = useRouter();
   const itemId = Number(params.itemid);
   const [item, setItem] = useState<ItemDto | null>(null);
+  const {user} = useAuth();
 
   useEffect(() => {
     getItem(itemId).then(setItem);
@@ -40,8 +42,12 @@ export default function UpdateItemPage({ params }: { params: { itemid: string }}
         price.focus();
         return;
       }
+      if (!user) {
+        alert('사용자 정보가 없습니다. 다시 로그인 해주세요.');
+        return;
+    }
 
-      updateItem(itemId,itemData).then(() => {
+      updateItem(user.email,itemId,itemData).then(() => {
       router.push('/adm');
     })
     .catch((error) => {
