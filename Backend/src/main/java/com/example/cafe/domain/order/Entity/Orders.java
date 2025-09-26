@@ -58,6 +58,13 @@ public class Orders {
     }
 
     public int calculateCurrentDeliveryStatus() {
+        /*
+        issue #92에 의해 수정된 내용
+        전날 14시 이전의 주문은 배송완료 (기존엔 2일전일 경우 배송완료로 확인)
+        전날 14시 이후 당일 14시 이전은 배송중
+        당일 14시 이후는 배송준비
+        기준으로 변경
+         */
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime today2PM = now.withHour(14).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime yesterday2PM = today2PM.minusDays(1);
