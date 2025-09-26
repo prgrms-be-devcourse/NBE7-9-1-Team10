@@ -78,4 +78,8 @@ public class Orders {
     public void updateDeliveryStatus() {
         this.deliveryStatus = calculateCurrentDeliveryStatus();
     }
+
+    public void updateOrderDate(LocalDateTime time){
+        this.orderDate = time;
+    }
 }
