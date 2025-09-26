@@ -12,8 +12,8 @@ export default function AdminLayout({
 
     return (
         <div className="min-h-screen bg-gray-100">
-            {/* 관리자 하위 네비게이션 */}
-            <div className="bg-white shadow-sm border-b">
+            {/* 관리자 하위 네비게이션 - 고정 위치 */}
+            <div className="bg-white shadow-sm border-b fixed top-16 left-0 right-0 z-40">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex space-x-8">
                         <Link
@@ -40,10 +40,10 @@ export default function AdminLayout({
                 </div>
             </div>
             
-            {/* 메인 컨텐츠 */}
-            <main>
+            {/* 메인 컨텐츠 - 네비게이션 바 높이만큼 패딩 추가 */}
+            <div className="pt-16">
                 {children}
-            </main>
+            </div>
         </div>
     );
 }
