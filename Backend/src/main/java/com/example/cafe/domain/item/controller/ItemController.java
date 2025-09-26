@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "상품 관리", description = "상품 CRUD API")
 @RestController
@@ -43,23 +44,46 @@ public class ItemController {
 
     @Operation(summary = "상품 생성", description = "새로운 상품을 생성합니다")
     @PostMapping
-    public ResponseEntity<ItemResponse> createItem(@RequestBody ItemCreateRequest request) {
+    public ResponseEntity<Object> createItem(
+            @RequestHeader(value = "User-Email", required = false) String userEmail,
+            @RequestBody ItemCreateRequest request) {
+
+        if (!"admin@email.com".equals(userEmail)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "관리자가 아닙니다. 권한이 필요합니다."));
+        }
+
         ItemResponse item = itemService.createItem(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(item);
     }
 
     @Operation(summary = "상품 수정", description = "기존 상품 정보를 수정합니다")
     @PutMapping("/{itemId}")
-    public ResponseEntity<ItemResponse> updateItem(
+    public ResponseEntity<Object> updateItem(
+            @RequestHeader(value = "User-Email", required = false) String userEmail,
             @PathVariable Long itemId,
             @RequestBody ItemUpdateRequest request) {
+
+        if (!"admin@email.com".equals(userEmail)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "관리자가 아닙니다. 권한이 필요합니다."));
+        }
+
         ItemResponse item = itemService.updateItem(itemId, request);
         return ResponseEntity.ok(item);
     }
 
     @Operation(summary = "상품 삭제", description = "상품의 Status를 수정합니다")
     @DeleteMapping("/{itemId}")
-    public ResponseEntity<Void> deleteItem(@PathVariable Long itemId) {
+    public ResponseEntity<Object> deleteItem(
+            @RequestHeader(value = "User-Email", required = false) String userEmail,
+            @PathVariable Long itemId) {
+
+        if (!"admin@email.com".equals(userEmail)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "관리자가 아닙니다. 권한이 필요합니다."));
+        }
+
         itemService.deleteItem(itemId);
         return ResponseEntity.noContent().build();
     }
