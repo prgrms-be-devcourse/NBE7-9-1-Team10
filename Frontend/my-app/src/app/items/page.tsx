@@ -3,6 +3,7 @@
 import {useEffect, useState} from "react";
 import {ItemDto} from "@/type/items";
 import {fetchApi, getItems} from "@/lib/client";
+import Link from "next/link";
 
 
 type CartItem = {
@@ -185,7 +186,7 @@ export default function Home() {
                     </div>
                 ))}
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className={"my-5"}>
                     <div className="mb-3">
                         <label htmlFor="email" className="form-label">이메일</label>
                         <input type="email" className="form-control mb-1 border rounded-md p-2 w-full bg-white"
@@ -203,8 +204,14 @@ export default function Home() {
                     </div>
                     <button className="btn btn-dark w-full bg-black text-white p-2 rounded-md mt-2" type="submit">결제하기
                     </button>
+
                 </form>
+                <div className="flex justify-center">
+                    <Link href={"/items/my_order"}>주문 내역 조회</Link>
+                </div>
+
             </div>
+
         </div>
 
     );

@@ -1,16 +1,16 @@
 "use client";
 
 import {useEffect, useState} from "react";
-import {fetchApi, getOrder} from "@/lib/client";
-import {useParams} from "next/navigation";
-import {OrderDto} from "@/type/orders";
-import {ItemDto} from "@/type/items";
+import {fetchApi} from "@/lib/client";
+
+import {Order} from "@/type/orders";
+
 
 
 
 export default function Home() {
 
-    const [orders, setOrders] = useState<OrderDto[]>([]);
+    const [orders, setOrders] = useState<Order[]>([]);
 
     function handleSubmit(e: any) {
         e.preventDefault();
@@ -21,15 +21,10 @@ export default function Home() {
 
         fetchApi(`/api/v1/orders/user?email=${emailInput}`, {method: "GET",})
             .then((data) => {
-                // 데이터 변환
-                const processedOrders = data.orders.map((order: any) => ({
-                    ...order,
-                    orderDate: new Date(order.orderDate) // 문자열을 Date 객체로 변환
-                }));
 
-                setOrders(processedOrders);
+                setOrders(data.orders);
 
-                if (processedOrders.length === 0) {
+                if (data.orders.length === 0) {
                     alert("검색결과가 없습니다.");
                 }
             })
@@ -41,15 +36,11 @@ export default function Home() {
 
     }
 
-    function checkTime(orderDate: Date): boolean {
-        const yesterday2PM = new Date();
-        yesterday2PM.setDate(yesterday2PM.getDate() - 1);
-        yesterday2PM.setHours(14, 0, 0, 0); // 어제 오후 2시 0분 0초
+    function cutDate(date: string){
+        const dates = date.split(".")[0].replace("T"," ");
 
-        // orderDate가 어제 오후 2시보다 이후인지 비교
-        return orderDate > yesterday2PM;
+        return dates;
     }
-
 
     return (
         <div className="flex flex-col justify-center items-start rounded-2xl bg-white md:space-x-8">
@@ -71,27 +62,18 @@ export default function Home() {
 
                 <ul className="flex flex-col">
                     {orders != null && orders.map((order) => (
-                        <li key={order.orderid} className="border flex flex-col m-2 p-2 gap-2" >
+                        <li key={order.orderId} className="border flex flex-col m-2 p-2 gap-2" >
                             {/* 주문 정보 */}
 
-                            {!checkTime(order.orderDate) && (
-                                <div>배송 완료</div>
-                            )}
-
-                            {checkTime(order.orderDate) && (
-                                <div>배송 예정</div>
-                            )}
 
 
                             <div className=" gap-15 items-center">
                                 {/* 주문 날짜 */}
                                 <div>
                                     <div>
-                                        Order Date:
-                                        {order.orderDate.getMonth() + 1}월
-                                        {order.orderDate.getDate()}일
-                                        {order.orderDate.getHours()}시
-                                        {order.orderDate.getMinutes()}분
+                                        Order Date: {
+                                        cutDate(order.orderDate)
+                                    }
                                     </div>
 
                                 </div>
