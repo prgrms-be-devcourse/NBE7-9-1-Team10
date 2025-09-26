@@ -25,22 +25,6 @@ export default function ItemsLayout({
                                     Grids & Circle
                                 </Link>
                             </div>
-                            
-                            {/* 네비게이션 메뉴 */}
-                            <div className="flex space-x-8">
-                                <Link 
-                                    href="/items" 
-                                    className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                                >
-                                    고객 페이지
-                                </Link>
-                                <Link 
-                                    href="/adm" 
-                                    className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                                >
-                                    관리자 페이지
-                                </Link>
-                            </div>
                         </div>
                     </div>
                 </nav>
