@@ -12,6 +12,7 @@ export type Order = {
     address: string;
     orderDate: string; // 날짜는 문자열로 받습니다.
     totalPrice: number;
+    deliveryStatus: string
     items: OrderItem[]; // 주문 상품 배열
 };
 

@@ -58,7 +58,10 @@ export function deleteItem(itemId: number):Promise<void>{
         method: 'DELETE',
     });
 }
-export function getOrders(): Promise<OrdersResponse> {
-    return fetchApi('/api/v1/orders');
+export function getOrders(status?: string): Promise<OrdersResponse> {
+    let url = '/api/v1/orders';
+    if (status && status !== 'all') {
+        url = `/api/v1/orders/${status}`;
+    }
+    return fetchApi(url);
 }
-
