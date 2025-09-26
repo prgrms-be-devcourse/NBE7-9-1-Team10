@@ -48,7 +48,7 @@ export default function AdminPage() {
 
     // 메인 UI
     return (
-        <div className="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+        <div className="flex items-center justify-center p-4">
             <div className="w-full max-w-2xl bg-white rounded-xl shadow-md p-8 space-y-6">
                 {/* 헤더 */}
                 <div className="flex justify-between items-center">
@@ -100,14 +100,6 @@ export default function AdminPage() {
                     ))}
                 </div>
                 
-                {/* 푸터 */}
-                <div className="flex justify-end pt-4">
-                <Link href="/adm/orders">
-                    <button className="bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300">
-                        주문내역
-                    </button>
-                    </Link>
-                </div>
             </div>
         </div>
     );
