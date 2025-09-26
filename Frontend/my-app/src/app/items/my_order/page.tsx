@@ -17,33 +17,31 @@ export default function Home() {
 
 
     function changeViewOption() {
-        let num ="3";
-        switch (viewOption){
-            case "전체주문" :
+        let num = "3";
+        switch (viewOption) {
+            case "전체주문":
                 setViewOption("배송준비");
-                num="0";
+                num = "0";
                 break;
-            case "배송준비" :
+            case "배송준비":
                 setViewOption("배송중");
-                num="1";
+                num = "1";
                 break;
-            case "배송중" :
+            case "배송중":
                 setViewOption("배송완료");
-                num="2";
+                num = "2";
                 break;
-
             default:
                 setViewOption("전체주문");
-                num="3";
-
+                num = "3";
         }
-        if(num=="3"){
+
+        if (num === "3") {
             setOrders(allOrders);
-            return;
+        } else {
+            setOrders(allOrders.filter((order) => order.deliveryStatus == num));
         }
 
-        const filtered = allOrders.filter((order) => order.deliveryStatus === num);
-        setOrders(filtered);
     }
 
 
