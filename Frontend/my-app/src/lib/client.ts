@@ -1,5 +1,7 @@
 import { ItemDto, ItemCreateRequest } from "@/type/items";
 import { OrdersResponse } from "@/type/orders";
+import { UserRole } from "@/type/user";
+
 export function fetchApi(url: string, options?: RequestInit) {
     if (options?.body) {
         const headers = new Headers(options.headers || {});
@@ -64,4 +66,10 @@ export function getOrders(status?: string): Promise<OrdersResponse> {
         url = `/api/v1/orders/${status}`;
     }
     return fetchApi(url);
+}
+export function login(email: string): Promise<UserRole> {
+    return fetchApi('/api/v1/login', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+    });
 }
