@@ -21,19 +21,42 @@ public class OrderController {
 
     @Operation(summary = "주문 생성", description = "새로운 주문을 생성합니다")
     @PostMapping("/api/v1/orders")
-    public ResponseEntity<OrderCreateResponse> orderCreateResponse(@RequestBody OrderCreateRequest request){
+    public ResponseEntity<OrderCreateResponse> createOrder(@RequestBody OrderCreateRequest request){
         OrderCreateResponse orderCreateResponse = orderService.createOrder(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(orderCreateResponse);
     }
 
+    @Operation(summary = "전체 주문 조회", description = "모든 주문을 조회합니다")
     @GetMapping("/api/v1/orders")
-    public ResponseEntity<FindAllOrderResponse> fIndAllOrderResponse(){
+    public ResponseEntity<FindAllOrderResponse> getAllOrders(){
         FindAllOrderResponse findAllOrderResponse = orderService.findAllOrders();
         return ResponseEntity.ok(findAllOrderResponse);
     }
 
+    @Operation(summary = "배송준비 주문 조회", description = "배송준비 상태인 주문만 조회합니다")
+    @GetMapping("/api/v1/orders/delivery-ready")
+    public ResponseEntity<FindAllOrderResponse> getDeliveryReadyOrders(){
+        FindAllOrderResponse findAllOrderResponse = orderService.findOrdersByDeliveryStatus(0);
+        return ResponseEntity.ok(findAllOrderResponse);
+    }
+
+    @Operation(summary = "배송중 주문 조회", description = "배송중 상태인 주문만 조회합니다")
+    @GetMapping("/api/v1/orders/delivery-in-progress")
+    public ResponseEntity<FindAllOrderResponse> getDeliveryInProgressOrders(){
+        FindAllOrderResponse findAllOrderResponse = orderService.findOrdersByDeliveryStatus(1);
+        return ResponseEntity.ok(findAllOrderResponse);
+    }
+
+    @Operation(summary = "배송완료 주문 조회", description = "배송완료 상태인 주문만 조회합니다")
+    @GetMapping("/api/v1/orders/delivery-completed")
+    public ResponseEntity<FindAllOrderResponse> getDeliveryCompletedOrders(){
+        FindAllOrderResponse findAllOrderResponse = orderService.findOrdersByDeliveryStatus(2);
+        return ResponseEntity.ok(findAllOrderResponse);
+    }
+
+    @Operation(summary = "사용자별 주문 조회", description = "특정 이메일의 모든 주문을 조회합니다")
     @GetMapping("/api/v1/orders/user")
-    public ResponseEntity<FindAllOrderByEmailResponse> FindAllOrderByEmailResponse(@RequestParam String email){
+    public ResponseEntity<FindAllOrderByEmailResponse> findAllOrderByEmailResponse(@RequestParam String email){
         if(email != null){
             FindAllOrderByEmailResponse findAllOrderByEmailResponse = orderService.findAllOrderByEmailResponse(email);
             return ResponseEntity.ok(findAllOrderByEmailResponse);

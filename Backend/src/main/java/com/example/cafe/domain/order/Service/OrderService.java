@@ -56,10 +56,19 @@ public class OrderService {
     }
 
     @Transactional
-    public FindAllOrderByEmailResponse findAllOrderByEmailResponse(String email){
-        List<Orders> orders = orderRepository.OptimizedFindAllOrdersByEmail(email);
+    public FindAllOrderResponse findOrdersByDeliveryStatus(int deliveryStatus){
+        List<Orders> orders = orderRepository.OptimizedFindAllOrders();
 
-        return new FindAllOrderByEmailResponse(email, orders);
+        List<Orders> filteredOrders = orders.stream()
+                .filter(order -> order.calculateCurrentDeliveryStatus() == deliveryStatus)
+                .collect(Collectors.toList());
+
+        return new FindAllOrderResponse(filteredOrders);
     }
 
+    @Transactional
+    public FindAllOrderByEmailResponse findAllOrderByEmailResponse(String email){
+        List<Orders> orders = orderRepository.OptimizedFindAllOrdersByEmail(email);
+        return new FindAllOrderByEmailResponse(email, orders);
+    }
 }

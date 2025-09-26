@@ -26,6 +26,7 @@ public class FindAllOrderByEmailResponse {
         private final String address;
         private final LocalDateTime orderDate;
         private final int totalPrice;
+        private final int deliveryStatus;
         private final List<OrderItemResponseDto> items;
 
         public FindAllOrderByEmailDto(Orders order){
@@ -33,6 +34,7 @@ public class FindAllOrderByEmailResponse {
             this.address = order.getAddress();
             this.orderDate = order.getOrderDate();
             this.totalPrice = order.totalPrice();
+            this.deliveryStatus = order.calculateCurrentDeliveryStatus();
             this.items = order.
                     getOrderItems().
                     stream().
@@ -41,4 +43,3 @@ public class FindAllOrderByEmailResponse {
         }
     }
 }
-
