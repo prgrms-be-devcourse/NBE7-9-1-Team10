@@ -2,8 +2,8 @@
 
 import {useEffect, useState} from "react";
 import {ItemDto} from "@/type/items";
-import {fetchApi, getItems} from "@/lib/client";
-import Link from "next/link";
+import {fetchApi} from "@/lib/client";
+import {Sale} from "@/type/sales";
 
 
 type CartItem = {
@@ -17,6 +17,7 @@ export default function Home() {
     const [cart, setCart] = useState<CartItem[]>([]);
     const [items, setItems] = useState<ItemDto[]>([]);
     const [totalPrice, setTotalPrice] = useState(0);
+    const [sale, setSale]= useState<Sale| null>(null);
 
 
     useEffect(() => {
@@ -28,6 +29,20 @@ export default function Home() {
             })
             .catch((err) => {
                 console.error("에러 발생:", err);
+            });
+
+    }, []);
+
+    useEffect(() => {
+        fetchApi("/api/v1/orders/sales", {
+            method: "GET"
+        })
+            .then((data) => {
+                console.log(data);
+                setSale(data);
+            })
+            .catch((err) => {
+
             });
     }, []);
 
@@ -129,6 +144,7 @@ export default function Home() {
 
 
     return (
+        <div>
         <div className="flex md:flex-row justify-center rounded-2xl bg-white md:space-x-8 ">
             {/* 상품 목록 */}
             <div className="p-4 flex-1">
@@ -206,6 +222,26 @@ export default function Home() {
 
             </div>
 
+        </div>
+            {/*판매 순위*/}
+            <div className={"bg-gray-400 text-white flex justify-center flex-col items-center"}>
+                {sale != null ? (
+                    <>
+                        <div>실시간 판매 순위</div>
+                        {sale.itemSales.map((item, index) => (
+                            <div key={item.id}>
+                                {index + 1}위 {item.name}
+                            </div>
+                        ))}
+                    </>
+                ) : (
+                    <div>
+                        오늘의 추천 제품 : {items.length > 0 ? items[0].itemName : "로딩 중..."}
+                    </div>
+                )}
+
+
+            </div>
         </div>
 
     );
