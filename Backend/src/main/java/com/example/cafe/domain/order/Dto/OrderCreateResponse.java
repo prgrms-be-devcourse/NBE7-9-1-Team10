@@ -8,20 +8,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class FindAllOrderDto {
+public class OrderCreateResponse {
 
-    private final Long orderId;
+    private final Long id;
     private final String email;
-    private final String address;
     private final LocalDateTime orderDate;
     private final int totalPrice;
     private final int deliveryStatus;
     private final List<OrderItemResponseDto> items;
 
-    public FindAllOrderDto(Orders order){
-        this.orderId = order.getId();
+    public OrderCreateResponse(Orders order){
+        this.id = order.getId();
         this.email = order.getCustomerEmail();
-        this.address = order.getAddress();
         this.orderDate = order.getOrderDate();
         this.totalPrice = order.totalPrice();
         this.deliveryStatus = order.calculateCurrentDeliveryStatus();

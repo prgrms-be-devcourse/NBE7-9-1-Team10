@@ -16,6 +16,9 @@ public class Orders {
     @Column(name = "orderId")
     private Long id;
 
+    @Column(name = "deliveryStatus")
+    private int deliveryStatus;
+
     private String customerEmail;
     private LocalDateTime orderDate;
 
@@ -30,6 +33,7 @@ public class Orders {
         this.customerEmail = customerEmail;
         this.orderDate = LocalDateTime.now();
         this.address = address;
+        this.deliveryStatus = 0;
     }
 
     public static Orders createOrder(String customerEmail, String address, List<OrderItem> orderItems){
@@ -52,4 +56,25 @@ public class Orders {
                 .sum();
     }
 
+    public int calculateCurrentDeliveryStatus() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime today2PM = this.orderDate.withHour(14).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime nextDay2PM = today2PM.plusDays(1);
+
+        if (now.isBefore(today2PM)) {
+            return 0; // 배송준비 (당일 오후 2시 이전)
+        } else if (now.isBefore(nextDay2PM)) {
+            return 1; // 배송중 (다음날 오후 2시 이전)
+        } else {
+            return 2; // 배송완료 (다음날 오후 2시 이후)
+        }
+    }
+
+    public int getDeliveryStatus() {
+        return this.deliveryStatus;
+    }
+
+    public void updateDeliveryStatus() {
+        this.deliveryStatus = calculateCurrentDeliveryStatus();
+    }
 }
