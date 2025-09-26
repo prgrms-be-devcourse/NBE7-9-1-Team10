@@ -21,8 +21,8 @@ public class OrderCreateResponse {
         this.id = order.getId();
         this.email = order.getCustomerEmail();
         this.orderDate = order.getOrderDate();
-        this.totalPrice = order.totalPrice();
         this.deliveryStatus = order.calculateCurrentDeliveryStatus();
+        this.totalPrice = order.getTotalPrice();
         this.items = order.
                 getOrderItems().
                 stream().

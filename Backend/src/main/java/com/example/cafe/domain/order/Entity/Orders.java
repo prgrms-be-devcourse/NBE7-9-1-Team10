@@ -24,6 +24,8 @@ public class Orders {
 
     private String address;
 
+    private int totalPrice;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -42,12 +44,11 @@ public class Orders {
             orders.getOrderItems().add(orderItem);
             orderItem.setOrder(orders); //DB에는 적용되는데 영속성 컨텍스트에도 업로드를 해야합니다. jpa가 영속성 컨텍스트부터 봅니다.
         }
-
         return orders;
     }
 
-    public int totalPrice(){
-        return this
+    public void setTotalPrice(){
+        this.totalPrice = this
                 .getOrderItems()
                 .stream()
                 .mapToInt(m ->
