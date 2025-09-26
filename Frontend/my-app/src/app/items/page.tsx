@@ -133,7 +133,7 @@ export default function Home() {
 
 
     return (
-        <div className="flex flex-col md:flex-row justify-center items-start rounded-2xl bg-white md:space-x-8">
+        <div className="flex flex-col md:flex-row justify-center rounded-2xl bg-white md:space-x-8 ">
             {/* 상품 목록 */}
             <div className="p-4">
                 <h5 className="font-bold">상품 목록</h5>

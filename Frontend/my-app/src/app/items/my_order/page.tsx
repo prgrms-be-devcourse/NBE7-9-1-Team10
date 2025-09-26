@@ -43,9 +43,9 @@ export default function Home() {
     }
 
     return (
-        <div className="flex flex-col justify-center items-start rounded-2xl bg-white md:space-x-8">
+        <div className="flex flex-col justify-center rounded-2xl bg-white md:space-x-8">
             {/* 주문 목록 */}
-            <div className="p-4">
+            <div className="max-w-4xl mx-auto p-10">
                 <h5 className="font-bold">주문 내역 조회</h5>
                 <hr/>
                 {/* 검색창 */}
