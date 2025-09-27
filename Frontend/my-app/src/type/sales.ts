@@ -1,6 +1,6 @@
 export type SaleItem = {
     id: number;
-    name: string;
+    itemName: string;
     totalQty: number;
 };
 export type Sale = {

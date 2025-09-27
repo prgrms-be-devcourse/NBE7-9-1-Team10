@@ -2,8 +2,8 @@
 
 import {useEffect, useState} from "react";
 import {ItemDto} from "@/type/items";
-import {fetchApi, getItems} from "@/lib/client";
-import Link from "next/link";
+import {fetchApi} from "@/lib/client";
+import {Sale} from "@/type/sales";
 
 
 type CartItem = {
@@ -17,9 +17,23 @@ export default function Home() {
     const [cart, setCart] = useState<CartItem[]>([]);
     const [items, setItems] = useState<ItemDto[]>([]);
     const [totalPrice, setTotalPrice] = useState(0);
+    const [sale, setSale]= useState<Sale| null>(null);
 
 
     useEffect(() => {
+        fetchApi("/api/v1/orders/sales", {
+            method: "GET"
+        })
+            .then((data) => {
+                const sortedItems = [...data.itemSales].sort((a, b) => b.totalQty - a.totalQty);
+                setSale({ ...data, itemSales: sortedItems });
+            })
+            .catch((err) => {
+
+            });
+
+
+
         fetchApi("/api/v1/items", {
             method: "GET"
         })
@@ -29,6 +43,7 @@ export default function Home() {
             .catch((err) => {
                 console.error("에러 발생:", err);
             });
+
     }, []);
 
 
@@ -118,7 +133,6 @@ export default function Home() {
             method: "POST",
             body: requestBody,
         }).then((data) => {
-            
             alert("주문 완료");
         })
             .catch((err) => {
@@ -127,11 +141,42 @@ export default function Home() {
 
     };
 
+    function getItemName(itemName: string) {
+        if(sale==null) {return (
+            <div className="flex flex-col items-center">
+                <div className={`text-[6px] text-white p-0.5 bg-blue-300`}>
+                    추천!
+                </div>
+                <div className="font-semibold">{itemName}</div>
+            </div>
+        ); }
+        const index = sale?.itemSales.findIndex(item => item.itemName === itemName);
+
+        let bgColor = "";
+        if (index === 0) bgColor = "bg-red-600";
+        else if (index === 1) bgColor = "bg-blue-600";
+        else if (index === 2) bgColor = "bg-green-600";
+
+        return (
+            <div className="flex flex-col items-center">
+                {index !== undefined && index >= 0 && index < 3 && (
+                    <div className={`text-[6px] text-white p-0.5 ${bgColor}`}>
+                        BEST {index + 1}위
+                    </div>
+                )}
+                <div className="font-semibold">{itemName}</div>
+            </div>
+        );
+    }
+
+
+
 
     return (
+
         <div className="flex md:flex-row justify-center rounded-2xl bg-white md:space-x-8 ">
             {/* 상품 목록 */}
-            <div className="p-4 flex-1">
+            <div className="p-4 flex-[3]">
                 <h5 className="font-bold">상품 목록</h5>
                 <hr/>
                 <ul className="flex flex-col">
@@ -141,7 +186,8 @@ export default function Home() {
 
                             <img className="" src={item.imageUrl} alt="" width={50}/>
 
-                            <div className="font-semibold">{item.itemName}</div>
+                            {getItemName(item.itemName)}
+
 
                             <div className="text-gray-600">{item.price}원</div>
 
@@ -154,7 +200,7 @@ export default function Home() {
             </div>
 
             {/* Summary and Form */}
-            <div className="p-4 bg-gray-200 rounded-r-2xl flex-shrink-0">
+            <div className="p-4 bg-gray-200 rounded-r-2xl ">
                 <div>
                     <h5 className="font-bold m-0 p-0">Summary</h5>
                 </div>
@@ -207,6 +253,7 @@ export default function Home() {
             </div>
 
         </div>
+
 
     );
 }
