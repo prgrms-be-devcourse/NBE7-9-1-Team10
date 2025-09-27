@@ -1,9 +1,6 @@
 package com.example.cafe.domain.order.Controller;
 
-import com.example.cafe.domain.order.Dto.FindAllOrderByEmailResponse;
-import com.example.cafe.domain.order.Dto.FindAllOrderResponse;
-import com.example.cafe.domain.order.Dto.OrderCreateRequest;
-import com.example.cafe.domain.order.Dto.OrderCreateResponse;
+import com.example.cafe.domain.order.Dto.*;
 import com.example.cafe.domain.order.Service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -62,5 +59,12 @@ public class OrderController {
             return ResponseEntity.ok(findAllOrderByEmailResponse);
         }
         return ResponseEntity.badRequest().build();
+    }
+
+    @Operation(summary = "총 판매 통계 조회", description = "모든 주문의 통계를 조회합니다")
+    @GetMapping("/api/v1/orders/sales")
+    public ResponseEntity<OrderSalesResponse> findOrderSalesResponse(){
+        OrderSalesResponse orderSalesResponse = orderService.findOrderSales();
+        return ResponseEntity.ok(orderSalesResponse);
     }
 }
