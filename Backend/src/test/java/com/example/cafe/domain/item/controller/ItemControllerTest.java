@@ -19,8 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.hasItems;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -131,5 +130,43 @@ public class ItemControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.itemId").value((int) id1))
                 .andExpect(jsonPath("$.itemName").value("아메리카노"));
+    }
+
+    @Test
+    @DisplayName("제품 수정 API")
+    void t5() throws Exception {
+        long id1 = createItemAndGetId("아메리카노", 3000, "testURL");
+
+        ResultActions result = mvc.perform(
+                put("/api/v1/items/{itemId}", id1)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("User-Email", "admin@email.com")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(itemToJson("카페라떼", 4500, "testURL2"))
+        ).andDo(print());
+
+        result
+                .andExpect(handler().handlerType(ItemController.class))
+                .andExpect(handler().methodName("updateItem"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.itemName").value("카페라떼"))
+                .andExpect(jsonPath("$.price").value((int) 4500));
+    }
+
+    @Test
+    @DisplayName("제품 삭제 API")
+    void t6() throws Exception {
+        long id1 = createItemAndGetId("아메리카노", 3000, "testURL");
+
+        ResultActions result = mvc.perform(
+                delete("/api/v1/items/{itemId}", id1)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("User-Email", "admin@email.com")
+        ).andDo(print());
+
+        result
+                .andExpect(handler().handlerType(ItemController.class))
+                .andExpect(handler().methodName("deleteItem"))
+                .andExpect(status().isNoContent());
     }
 }
