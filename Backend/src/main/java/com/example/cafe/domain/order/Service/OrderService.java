@@ -9,8 +9,6 @@ import com.example.cafe.domain.order.Dto.OrderCreateResponse;
 import com.example.cafe.domain.order.Entity.OrderItem;
 import com.example.cafe.domain.order.Entity.Orders;
 import com.example.cafe.domain.order.Repository.OrderRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
