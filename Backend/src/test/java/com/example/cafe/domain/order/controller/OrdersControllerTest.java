@@ -229,7 +229,7 @@ public class OrdersControllerTest {
     @DisplayName("배송 중 상태 확인 API")
     void t7() throws Exception {
         LocalDateTime now = LocalDateTime.now();
-        long id1 = createOrderAt((now.getHour() < 14 ? now : now.minusDays(1)));
+        long id1 = createOrderAt((now.getHour() < 14 ? now.minusDays(1).withHour(12) : now.withHour(12)));
 
         ResultActions result = mvc.perform(
                 get("/api/v1/orders/delivery-in-progress")
