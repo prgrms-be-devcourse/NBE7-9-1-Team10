@@ -209,7 +209,8 @@ public class OrdersControllerTest {
     @DisplayName("배송 준비 상태 확인 API")
     void t6() throws Exception {
         LocalDateTime now = LocalDateTime.now();
-        long id1 = createOrderAt((now.getHour() >= 14 ? now.plusDays(1) : now));
+        //지금 주문이 들어가면 무조건 배송준비상태
+        long id1 = createOrderAt(now);
 
         ResultActions result = mvc.perform(
                 get("/api/v1/orders/delivery-ready")
@@ -229,6 +230,7 @@ public class OrdersControllerTest {
     @DisplayName("배송 중 상태 확인 API")
     void t7() throws Exception {
         LocalDateTime now = LocalDateTime.now();
+        //배송중은 14시 전에 주문할때는 전날 14시 이전, 14시 후에 주문할때는 당일 14시 이전이면 된다.
         long id1 = createOrderAt((now.getHour() < 14 ? now.minusDays(1).withHour(12) : now.withHour(12)));
 
         ResultActions result = mvc.perform(
@@ -249,7 +251,8 @@ public class OrdersControllerTest {
     @DisplayName("배송 완료 상태 확인 API")
     void t8() throws Exception {
         LocalDateTime now = LocalDateTime.now();
-        long id1 = createOrderAt((now.getHour() >= 14 ? now.minusDays(2) : now.minusDays(1)));
+        //배송완료는 14시 전에 주문할때는 전전날 14시 이전, 14시 후에 주문할때는 전날 14시 이전이면 된다.
+        long id1 = createOrderAt((now.getHour() < 14 ? now.minusDays(2).withHour(12) : now.minusDays(1).withHour(12)));
 
         ResultActions result = mvc.perform(
                 get("/api/v1/orders/delivery-completed")
