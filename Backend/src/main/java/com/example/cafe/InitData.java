@@ -37,10 +37,12 @@ public class InitData {
         public void initDB(){
 
             //Item 만들기
-            Item item1 = new Item("Item1", 1000, "urls");
-            Item item2 = new Item("Item2", 1000, "urls");
-            Item item3 = new Item("Item3", 2500, "urls");
-            Item item4 = new Item("Item4", 3000, "urls");
+            String url = "https://i.namu.wiki/i/mHEVMXPbIwDHd0qsYHTscSLzCl7pVTr9DlgqwpXLHZMWCkwNROh3AkebQH9qxGl9xCZMP85OpCslE-fQyuFqKiMLd0Ww140o99X7M1E3awYyXAhMhTjIcAx_AEHogVi9DujayU4Iq9ZjVuEVgShKQQ.webp";
+
+            Item item1 = new Item("Item1", 1000, url);
+            Item item2 = new Item("Item2", 1000, url);
+            Item item3 = new Item("Item3", 2500, url);
+            Item item4 = new Item("Item4", 3000, url);
 
             em.persist(item1);
             em.persist(item2);

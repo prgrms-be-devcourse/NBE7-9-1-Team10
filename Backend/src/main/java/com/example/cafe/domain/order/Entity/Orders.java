@@ -58,19 +58,41 @@ public class Orders {
     }
 
     public int calculateCurrentDeliveryStatus() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime orderTime = this.orderDate;
+        /*
+        issue #92에 의해 수정된 내용
+        - 전날 14시 이전의 주문은 배송완료 (기존엔 2일전일 경우 배송완료로 확인)
+        - 전날 14시 이후 당일 14시 이전은 배송중
+        - 당일 14시 이후는 배송준비
+        - 위 기준으로 변경
+         */
+        /*
+        issue #114에 의해 수정된 내용
+        - 기존 내용은 확인하는 시간에 대해서 충분히 고려하지 않았음
+        - 전전날까지 계산에 포함해서 검사해야 간단한 형식의 묶음처리 방식으로 확인 가능함
+        - 기획은 전날 14부터 당일 오후 14시까지의 주문을 묶어서 처리(배송)하기
+        - 현재 시간이 14시 기준으로 이전인지 이후인지 확인하고 처리할 필요가 있다.
+        - 오늘 14시 이전에 확인하는 경우
+            - 전전날 14시 이전 주문 -> 배송완료
+            - 전전날 14시 이후 ~ 전날 14시 이전 -> 배송중
+            - 전날 14시 이후~ -> 배송준비
+        - 오늘 14시 이후에 확인하는 경우
+            - 전날 14시 이전 주문 -> 배송완료
+            - 전날 14시 이후 ~ 당일 14시 이전 -> 배송중
+            - 당일 14시 이후~ -> 배송준비
+         */
+        LocalDateTime now                   = LocalDateTime.now();
+        LocalDateTime today2pm              = now.withHour(14).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime yesterday2pm          = today2pm.minusDays(1);
+        LocalDateTime dayBeforeYesterday2pm = yesterday2pm.minusDays(1);
 
-        LocalDateTime today2PM = now.withHour(14).withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime yesterday2PM = today2PM.minusDays(1);
-
-        LocalDateTime orderPlus2Days = orderTime.plusDays(2);
-
-        if (now.isAfter(orderPlus2Days)) {
-            return 2;
-        } else if (orderTime.isAfter(yesterday2PM) && orderTime.isBefore(today2PM)) {
-            return 1;
-        } else {
+        if (now.isBefore(today2pm)) {
+            if(orderDate.isBefore(dayBeforeYesterday2pm)) return 2;
+            if(orderDate.isBefore(yesterday2pm)) return 1;
+            return 0;
+        }
+        else {
+            if(orderDate.isBefore(yesterday2pm)) return 2;
+            if(orderDate.isBefore(today2pm)) return 1;
             return 0;
         }
     }
