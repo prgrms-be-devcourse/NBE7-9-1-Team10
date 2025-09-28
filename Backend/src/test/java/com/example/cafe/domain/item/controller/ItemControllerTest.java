@@ -45,6 +45,16 @@ public class ItemControllerTest {
     private ResultActions postItem(String itemName, Integer price, String imageUrl) throws Exception {
         return mvc.perform(
                 post("/api/v1/items")
+                        .header("User-Email", "admin@email.com")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(itemToJson(itemName, price, imageUrl))
+        ).andDo(print());
+    }
+
+    private ResultActions postItem(String itemName, Integer price, String imageUrl, String userEmail) throws Exception {
+        return mvc.perform(
+                post("/api/v1/items")
+                        .header("User-Email", userEmail)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(itemToJson(itemName, price, imageUrl))
         ).andDo(print());
@@ -59,7 +69,22 @@ public class ItemControllerTest {
         result
                 .andExpect(handler().handlerType(ItemController.class))
                 .andExpect(handler().methodName("createItem"))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.itemName").value("아메리카노"))
+                .andExpect(jsonPath("$.price").value(3000))
+                .andExpect(jsonPath("$.imageUrl").value("testURL"));
+    }
+
+    @Test
+    @DisplayName("상품 생성 API - 관리자가 아닐경우 실패")
+    void t2() throws Exception {
+        var result = postItem("아메리카노", 3000, "testURL", "user1@test.com");
+
+        result
+                .andExpect(handler().handlerType(ItemController.class))
+                .andExpect(handler().methodName("createItem"))
+                .andExpect(status().isForbidden()) //403에러
+                .andExpect(jsonPath("$.error").value("관리자가 아닙니다. 권한이 필요합니다."));
     }
 
 }
