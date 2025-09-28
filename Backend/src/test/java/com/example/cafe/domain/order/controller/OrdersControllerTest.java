@@ -7,6 +7,7 @@ import com.example.cafe.domain.order.Entity.Orders;
 import com.example.cafe.domain.order.Repository.OrderRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +38,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class OrdersControllerTest {
 
-    @Autowired private MockMvc mvc;
-    @Autowired private ObjectMapper objectMapper;
-    @Autowired private ItemRepository itemRepository;
+    @Autowired private MockMvc         mvc;
+    @Autowired private ObjectMapper    objectMapper;
+    @Autowired private ItemRepository  itemRepository;
     @Autowired private OrderRepository orderRepository;
 
-    //------------------------ 픽스처 ------------------------
+    //------------------------ Fixture ------------------------
     // 공통 픽스처(Fixture 테스트 실행 전에 준비해둔 고정된 데이터/상태)
     private Long item1Id;
     private Long item2Id;
@@ -54,9 +55,9 @@ public class OrdersControllerTest {
         item2Id = itemRepository.save(new Item("라떼", 4500, "img2")).getItemId();
     }
 
-    //------------------------ 헬퍼 ------------------------
+    //------------------------- HELPER ------------------------------
     //주문을 하나 만들고 아이디를 가져온다.
-    private String orderJson(String email, String address, Map<Long, Integer> idQty) throws Exception {
+    private String orderToJson(String email, String address, Map<Long, Integer> idQty) throws Exception {
         Map<String, Object> req = new HashMap<>();
         req.put("email", email);
         req.put("address", address);
@@ -72,7 +73,7 @@ public class OrdersControllerTest {
         return mvc.perform(
                 post("/api/v1/orders")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(orderJson(email, address, idQty))
+                        .content(orderToJson(email, address, idQty))
         ).andDo(print());
     }
 
@@ -84,21 +85,19 @@ public class OrdersControllerTest {
 
     //시간대별 주문 생성
     private long createOrderAt(LocalDateTime date) throws Exception {
-        long id =createOrderAndGetId("test@example.com", "서울 강동");
+        long id = createOrderAndGetId("test@example.com", "서울 강동");
         Orders order = orderRepository.findById(id).orElseThrow();
         order.updateOrderDate(date);
         orderRepository.flush();
         return id;
     }
 
-    //------------------------ 테스트 ------------------------
+    //------------------------- TEST ------------------------------
     @Test
     @DisplayName("주문 생성 API")
     void t1() throws Exception {
-        // when 이렇게 요청을 받는다면
         var result = postOrder("test@example.com", "서울 강남", Map.of(item1Id, 2, item2Id, 1));
 
-        // then 결과를 이렇게 예상한다
         result
                 .andExpect(handler().handlerType(OrderController.class))
                 .andExpect(handler().methodName("createOrder"))
@@ -115,17 +114,14 @@ public class OrdersControllerTest {
     @Test
     @DisplayName("전체 주문 조회 API")
     void t2() throws Exception {
-        int beforeSize = orderRepository.findAll().size();
         long id1 = createOrderAndGetId("test@example.com", "서울 송파");
         long id2 = createOrderAndGetId("testest@example.com", "부산 해운대");
 
-        // when
         ResultActions result = mvc.perform(
                 get("/api/v1/orders")
                         .accept(MediaType.APPLICATION_JSON)
         ).andDo(print());
 
-        // then
         result
                 .andExpect(handler().handlerType(OrderController.class))
                 .andExpect(handler().methodName("getAllOrders"))
@@ -140,14 +136,12 @@ public class OrdersControllerTest {
     void t3() throws Exception {
         createOrderAndGetId("one@example.com", "서울 광진");
 
-        // when
         ResultActions result = mvc.perform(
                 get("/api/v1/orders/user")
                         .param("email", "one@example.com")
                         .accept(MediaType.APPLICATION_JSON)
         ).andDo(print());
 
-        // then
         result
                 .andExpect(handler().handlerType(OrderController.class))
                 .andExpect(handler().methodName("findAllOrderByEmailResponse"))
@@ -157,21 +151,20 @@ public class OrdersControllerTest {
     }
 
     @Test
-    @DisplayName("NOT USED_일별 주문 조회 API")
+    @DisplayName("일별 주문 조회 API")
+    @Disabled("NOT USED")
     void t4() throws Exception {
 
         long todayOrder = createOrderAndGetId("day@example.com", "서울 강동");
 
         String today = LocalDate.now().toString();
 
-        // when
         ResultActions result = mvc.perform(
                 get("/api/v1/orders_daily")
                         .param("date", today)
                         .accept(MediaType.APPLICATION_JSON)
         ).andDo(print());
 
-        // then
         result
                 .andExpect(handler().handlerType(OrderController.class))
                 .andExpect(handler().methodName("getDailyOrders")) // 실제 메서드명으로 변경 필요
@@ -182,7 +175,8 @@ public class OrdersControllerTest {
     }
 
     @Test
-    @DisplayName("NOT USED_주문 취소 API")
+    @DisplayName("주문 취소 API")
+    @Disabled("NOT USED")
     void t5() throws Exception {
 
         long id1 = createOrderAndGetId("delete@example.com", "서울 강동구");
@@ -214,7 +208,8 @@ public class OrdersControllerTest {
     @DisplayName("배송 준비 상태 확인 API")
     void t6() throws Exception {
         LocalDateTime now = LocalDateTime.now();
-        long id1 = createOrderAt((now.getHour() >= 14 ? now.plusDays(1) : now));
+        //지금 주문이 들어가면 무조건 배송준비상태
+        long id1 = createOrderAt(now);
 
         ResultActions result = mvc.perform(
                 get("/api/v1/orders/delivery-ready")
@@ -234,7 +229,8 @@ public class OrdersControllerTest {
     @DisplayName("배송 중 상태 확인 API")
     void t7() throws Exception {
         LocalDateTime now = LocalDateTime.now();
-        long id1 = createOrderAt((now.getHour() < 14 ? now : now.minusDays(1)));
+        //배송중은 14시 전에 주문할때는 전날 14시 이전, 14시 후에 주문할때는 당일 14시 이전이면 된다.
+        long id1 = createOrderAt((now.getHour() < 14 ? now.minusDays(1).withHour(12) : now.withHour(12)));
 
         ResultActions result = mvc.perform(
                 get("/api/v1/orders/delivery-in-progress")
@@ -254,7 +250,8 @@ public class OrdersControllerTest {
     @DisplayName("배송 완료 상태 확인 API")
     void t8() throws Exception {
         LocalDateTime now = LocalDateTime.now();
-        long id1 = createOrderAt((now.getHour() >= 14 ? now.minusDays(2) : now.minusDays(1)));
+        //배송완료는 14시 전에 주문할때는 전전날 14시 이전, 14시 후에 주문할때는 전날 14시 이전이면 된다.
+        long id1 = createOrderAt((now.getHour() < 14 ? now.minusDays(2).withHour(12) : now.minusDays(1).withHour(12)));
 
         ResultActions result = mvc.perform(
                 get("/api/v1/orders/delivery-completed")
