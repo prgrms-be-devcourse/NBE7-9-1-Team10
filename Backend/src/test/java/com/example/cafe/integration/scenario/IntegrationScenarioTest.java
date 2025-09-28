@@ -29,12 +29,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 class IntegrationScenarioTest {
 
-    @Autowired
-    MockMvc mvc;
-    @Autowired
-    ObjectMapper objectMapper;
+    @Autowired MockMvc      mvc;
+    @Autowired ObjectMapper objectMapper;
 
-    //------------------------ HELPER ------------------------
+    //------------------------- HELPER ------------------------------
 
     private long createItem(String name, int price) throws Exception {
         Map<String, Object> req = new HashMap<>();
@@ -89,7 +87,7 @@ class IntegrationScenarioTest {
         return readMap(res);
     }
 
-    //------------------------ TEST ------------------------
+    //------------------------- TEST ------------------------------
     @Test
     @DisplayName("mvp 시나리오: 상품추가(4) -> 주문 -> 상품수정 -> 상품제거 -> 이메일 단건주문조회")
     void mvpScenario() throws Exception {

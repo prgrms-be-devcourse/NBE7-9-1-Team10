@@ -39,16 +39,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class ItemControllerUnitTest {
 
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Mock
-    private ItemService itemService;
-    @InjectMocks
-    private ItemController itemController;
+    @Autowired   private MockMvc        mvc;
+    @Autowired   private ObjectMapper   objectMapper;
+    @Mock        private ItemService    itemService;
+    @InjectMocks private ItemController itemController;
 
     //매 테스트 직전 호출된다. MockMvc환경 세팅
     @BeforeEach
