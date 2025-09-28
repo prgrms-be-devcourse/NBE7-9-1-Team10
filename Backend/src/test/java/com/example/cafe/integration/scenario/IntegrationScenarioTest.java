@@ -41,6 +41,7 @@ class IntegrationScenarioTest {
 
         ResultActions res = mvc.perform(
                         post("/api/v1/items")
+                                .header("User-Email", "admin@email.com")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(req))
                 )
@@ -114,6 +115,7 @@ class IntegrationScenarioTest {
 
         mvc.perform(
                         put("/api/v1/items/{itemId}", itemId2)
+                                .header("User-Email", "admin@email.com")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(putBody))
                 )
@@ -121,7 +123,9 @@ class IntegrationScenarioTest {
                 .andExpect(status().isOk());
 
         // 상품 제거 3번 상품을 제거
-        mvc.perform(delete("/api/v1/items/{itemId}", itemId3))
+        mvc.perform(delete("/api/v1/items/{itemId}", itemId3)
+                        .header("User-Email", "admin@email.com")
+                )
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
