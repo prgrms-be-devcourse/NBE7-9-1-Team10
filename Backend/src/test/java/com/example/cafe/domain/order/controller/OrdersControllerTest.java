@@ -114,7 +114,6 @@ public class OrdersControllerTest {
     @Test
     @DisplayName("전체 주문 조회 API")
     void t2() throws Exception {
-        int beforeSize = orderRepository.findAll().size();
         long id1 = createOrderAndGetId("test@example.com", "서울 송파");
         long id2 = createOrderAndGetId("testest@example.com", "부산 해운대");
 

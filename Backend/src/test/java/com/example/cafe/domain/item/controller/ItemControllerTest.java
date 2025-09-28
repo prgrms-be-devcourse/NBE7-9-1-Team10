@@ -11,12 +11,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.Matchers.hasItems;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -51,6 +54,7 @@ public class ItemControllerTest {
         ).andDo(print());
     }
 
+    //이메일 입력으로 admin 아닌 케이스 검증
     private ResultActions postItem(String itemName, Integer price, String imageUrl, String userEmail) throws Exception {
         return mvc.perform(
                 post("/api/v1/items")
@@ -58,6 +62,11 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(itemToJson(itemName, price, imageUrl))
         ).andDo(print());
+    }
+
+    private long createItemAndGetId(String itemName, Integer price, String imageUrl) throws Exception {
+        MvcResult r = postItem(itemName, price, imageUrl).andReturn();
+        return objectMapper.readTree(r.getResponse().getContentAsString()).get("itemId").asLong();
     }
 
     //------------------------- TEST ------------------------------
@@ -87,4 +96,40 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.error").value("관리자가 아닙니다. 권한이 필요합니다."));
     }
 
+    @Test
+    @DisplayName("전체 제품 조회 API")
+    void t3() throws Exception {
+        long id1 = createItemAndGetId("아메리카노", 3000, "testURL");
+        long id2 = createItemAndGetId("카페라떼", 4500, "testURL2");
+
+        ResultActions result = mvc.perform(
+                get("/api/v1/items")
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andDo(print());
+
+        result
+                .andExpect(handler().handlerType(ItemController.class))
+                .andExpect(handler().methodName("getAllItems"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[*].itemId").value(hasItems((int) id1, (int) id2)))
+                .andExpect(jsonPath("$[*].itemName").value(hasItems("아메리카노", "카페라떼")));
+    }
+
+    @Test
+    @DisplayName("단일 제품 조회 API")
+    void t4() throws Exception {
+        long id1 = createItemAndGetId("아메리카노", 3000, "testURL");
+
+        ResultActions result = mvc.perform(
+                get("/api/v1/items/{itemId}", id1)
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andDo(print());
+
+        result
+                .andExpect(handler().handlerType(ItemController.class))
+                .andExpect(handler().methodName("getItem"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.itemId").value((int) id1))
+                .andExpect(jsonPath("$.itemName").value("아메리카노"));
+    }
 }
