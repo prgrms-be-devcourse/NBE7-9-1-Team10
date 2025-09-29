@@ -2,10 +2,7 @@ package com.example.cafe.domain.order.Service;
 
 import com.example.cafe.domain.item.entity.Item;
 import com.example.cafe.domain.item.repository.ItemRepository;
-import com.example.cafe.domain.order.Dto.FindAllOrderByEmailResponse;
-import com.example.cafe.domain.order.Dto.FindAllOrderResponse;
-import com.example.cafe.domain.order.Dto.OrderCreateRequest;
-import com.example.cafe.domain.order.Dto.OrderCreateResponse;
+import com.example.cafe.domain.order.Dto.*;
 import com.example.cafe.domain.order.Entity.OrderItem;
 import com.example.cafe.domain.order.Entity.Orders;
 import com.example.cafe.domain.order.Repository.OrderRepository;
@@ -80,5 +77,16 @@ public class OrderService {
     public FindAllOrderByEmailResponse findAllOrderByEmailResponse(String email){
         List<Orders> orders = orderRepository.OptimizedFindAllOrdersByEmail(email);
         return new FindAllOrderByEmailResponse(email, orders);
+    }
+
+    public OrderSalesResponse findOrderSales() {
+        List<ItemSalesDto> itemSalesDtos= orderRepository.findItemSalesRaw()
+                .stream()
+                .map((row) ->{
+                    return new ItemSalesDto((Long)row[0], (String) row[1], (Long) row[2]);
+                })
+                .toList();
+        Long totalPrice = orderRepository.findTotalSale();
+        return new OrderSalesResponse(totalPrice,itemSalesDtos);
     }
 }
