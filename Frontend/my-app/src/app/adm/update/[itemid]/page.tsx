@@ -3,12 +3,13 @@
 import { useRouter } from "next/navigation";
 import { updateItem,getItem } from "@/lib/client";
 import { ItemDto } from '@/type/items';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useAuth } from '@/context/AuthContext'
 
-export default function UpdateItemPage({ params }: { params: { itemid: string }}) {
+export default function UpdateItemPage({ params }: { params: Promise<{ itemid: string }> }) {
   const router = useRouter();
-  const itemId = Number(params.itemid);
+  const resolvedParams = use(params);
+  const itemId = Number(resolvedParams.itemid);
   const [item, setItem] = useState<ItemDto | null>(null);
   const {user} = useAuth();
 
