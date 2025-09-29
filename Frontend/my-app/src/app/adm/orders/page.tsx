@@ -79,6 +79,7 @@ export default function OrderListPage() {
                                 <div>
                                     <p className="text-lg font-semibold text-gray-800">주문 번호: {order.orderId}</p>
                                     <p className="text-sm text-gray-500">{order.email}</p>
+                                    <p className="text-sm text-gray-500">주문일시: {new Date(order.orderDate).toLocaleString('ko-KR')}</p>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-lg font-bold text-blue-600">{order.totalPrice.toLocaleString()}원</p>

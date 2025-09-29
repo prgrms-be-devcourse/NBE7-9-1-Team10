@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext'
 
 export default function NewItemPage() {
   const router = useRouter();
+  const {user} = useAuth();
 
   const handleSubmit = (e: any) => {
     
@@ -15,7 +16,7 @@ export default function NewItemPage() {
     const price = form.price;
     const imageUrl = form.imageUrl;
     const itemData = { itemName: itemName.value, price: Number(price.value), imageUrl: imageUrl.value };
-    const {user} = useAuth();
+    
     
     if (itemName.value.length === 0) {
         alert("이름을 입력해주세요.");
