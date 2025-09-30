@@ -90,6 +90,5 @@ frontend/
 
 ### 🔍 Code Review 규칙
 - 최소 1명 이상의 approve 필요
-- 테스트 통과 필수
 - 코드 컨벤션 준수 확인
 
