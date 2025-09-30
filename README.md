@@ -54,7 +54,11 @@ frontend/
 └── components
     └── ui
 ```
+## 🗄️ ERD
 
+<div align="center">
+  <img width="700" alt="ERD 다이어그램" src="https://github.com/user-attachments/assets/0a6f547d-b6b0-460e-a42a-c4134f456c40" />
+</div>
 
 ## 🤝 협업 방식
 
@@ -82,7 +86,10 @@ frontend/
 | `fix` | 버그 & 수정사항 관련 | `fix: 에러 수정` |
 | `test` | 테스트 코드, 리팩토링 테스트 코드 추가 | `test: 테스트 코드 추가 및 수정` |
 | `docs` | 문서 수정 | `docs: 문서 수정` |
+| `refactor` | 코드 리팩토링 | `refactor: ItemService 로직 개선` |
 
-
-
+### 🔍 Code Review 규칙
+- 최소 1명 이상의 approve 필요
+- 테스트 통과 필수
+- 코드 컨벤션 준수 확인
 
